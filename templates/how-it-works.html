@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Tutor AI Works</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Tutor AI - How It Works</h1>
+
+        <h2>Frontend</h2>
+        <p>The Tutor AI system allows users to ask questions about a textbook, which is either uploaded as a file or linked via a URL. Users can input their questions into the provided text field. The question, along with the file or URL, is then sent to the server for processing.</p>
+        <p>The interface uses HTML forms for users to submit their data, and upon receiving a response, the answer is displayed on the page, allowing users to interact with the AI seamlessly. There is a cookie notice displayed to ensure the user's privacy is respected.</p>
+
+        <h2>Backend</h2>
+        <p>On the backend, the Tutor AI uses a Python Flask application that integrates with various libraries such as Langchain, OpenAI, and PyPDF. The system loads the provided textbook (PDF or URL), processes it into a searchable format, and allows for question-answering based on the context of the uploaded content.</p>
+        <p>The server uses OpenAI’s GPT-3.5 to analyze the content and generate concise responses to the user’s questions. The backend is responsible for handling file uploads, managing text extraction, and ensuring that the proper context is retrieved to answer the user's query accurately.</p>
+
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+
+</body>
+</html>

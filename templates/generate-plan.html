@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Study Plan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2rem;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        button.submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        button.submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px; /* Increased padding for better spacing */
+            background-color: #eaf0e6;
+            border: 1px solid #d1e3d1;
+            border-radius: 5px;
+            line-height: 1.6; /* Better readability */
+        }
+
+        .result ol, .result ul {
+            margin-left: 20px; /* Indentation for lists */
+            padding-left: 20px; /* Extra space to keep lists inside the container */
+        }
+
+        .result li {
+            margin-bottom: 10px; /* Spacing between list items */
+        }
+
+        .result h3 {
+            margin-bottom: 15px; /* Space below the title */
+        }
+
+        .result p {
+            margin-bottom: 10px; /* Space between paragraphs inside the result */
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 30px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Custom Study Plan</h1>
+            <p>Create a personalized study plan to help you succeed!</p>
+        </header>
+        <section class="content"></section>
+            <form action="/generate-plan" method="POST" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label for="file">Upload a file for reference:</label>
+                    <input type="file" id="file" name="file">
+                </div>
+
+                <div class="input-group">
+                    <label for="prompt">What do you need help with? (Enter a prompt):</label>
+                    <textarea id="prompt" name="prompt" placeholder="Write your prompt here..." rows="4"></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Generate Study Plan</button>
+            </form>
+
+            {% if result %}
+            <div class="result">
+                <h3>Your Custom Study Plan:</h3>
+                {{ result.result | safe }}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <footer>
+        <p>Learn smarter, not harder. © 2025</p>
+    </footer>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function() {
+            const prompt = document.querySelector('#prompt').value;
+            if (prompt === "") {
+                alert("Please enter a prompt!");
+                event.preventDefault();
+            }
+        });
+
+    </script>
+</body>
+</html>
