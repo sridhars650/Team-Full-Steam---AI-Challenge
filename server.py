@@ -293,8 +293,12 @@ filepath = "./tutor_textbook.pdf"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx', 'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__)
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/",methods=["GET"])
 def index():
+   return render_template("index.html")
+
+@app.route("/tutor-ai", methods=["GET", "POST"])
+def tutor_ai():
     global url_data, prompt_data  # Access global variables
 
     if request.method == "POST":
@@ -313,9 +317,9 @@ def index():
         base_qa_pipeline = BaseQAPipeline()
         result = base_qa_pipeline.invoke({'question' : prompt_data})
         print(result)
-        return render_template("index.html", result=result)
+        return render_template("tutor-ai.html", result=result)
 
-    return render_template("index.html")
+    return render_template("tutor-ai.html")
 
 @app.route('/how-it-works', methods=['GET'])
 def how_it_works():
@@ -342,5 +346,9 @@ def generate_plan():
 
 
 if __name__ == "__main__":
-    from waitress import serve
-    serve(app, host="0.0.0.0", port=8080)
+    #from waitress import serve
+    #serve(app, host="0.0.0.0", port=8081)
+    # above code is for SERVER
+    #below code right now is to debug
+    app.run(port=8080)
+    print("Server is running...")

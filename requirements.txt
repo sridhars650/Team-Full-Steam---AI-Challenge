@@ -10,3 +10,4 @@ markdown
 guardrails-ai
 python-dotenv
 waitress
+setuptools 

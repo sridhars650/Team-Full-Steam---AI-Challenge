@@ -27,7 +27,7 @@ def main():
         install_guardrail_pkgs(i)
     subprocess.check_call("clear")
     print("SERVER SETUP HAS FINISHED. SERVER IS NOW LOADING. PLEASE WAIT.")
-    subprocess.Popen([sys.executable, "server.py"])
+    subprocess.Popen([sys.executable, "server.py"]) 
     sys.exit()
 
 
@@ -36,6 +36,7 @@ if __name__ == "__main__":
     try:
         # Check if requirements are already installed
         subprocess.check_call([sys.executable, "-m", "pip", "check"])
+        install_packages()
     except subprocess.CalledProcessError:
         print("Requirements are missing or outdated. Installing...")
         install_packages()

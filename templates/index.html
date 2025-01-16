@@ -1,210 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutor AI</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flask App Interface</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb);
+      animation: backgroundAnimation 8s infinite alternate;
+    }
 
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
+    /* Background Animation */
+    @keyframes backgroundAnimation {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
+    /* Button Container */
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
 
-        form {
-            margin-bottom: 20px;
-        }
+    /* Button Styles */
+    .animated-button {
+      background: linear-gradient(45deg, #6a11cb, #2575fc);
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      padding: 15px 30px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-        }
+    .animated-button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 300%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: skewX(-30deg);
+      transition: left 0.5s ease-in-out;
+    }
 
-        input[type="text"],
-        textarea,
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-        }
+    .animated-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
 
-        button {
-            display: inline-block;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+    .animated-button:hover::before {
+      left: 100%;
+    }
 
-        button[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-        }
+    /* Button Text */
+    .animated-button span {
+      position: relative;
+      z-index: 2;
+    }
 
-        button[type="submit"]:disabled {
-            background-color: grey;
-            cursor: not-allowed;
-        }
-
-        .secondary-button {
-            background-color: #007BFF;
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            margin-top: 10px;
-            display: inline-block;
-        }
-
-        .secondary-button:hover {
-            background-color: #0056b3;
-        }
-
-        #result {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-
-        .popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .popup-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 400px;
-        }
-
-        .popup-content button {
-            margin-top: 10px;
-        }
-    </style>
+    .animated-button:focus {
+      outline: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="popup" id="popup">
-        <div class="popup-content">
-            <p>We use cookies and track data to enhance your experience, provide personalized study plans, and enable features like uploading files with OpenAI. By continuing, you consent to our use of cookies and data processing practices in line with our privacy policy.</p>
-            <button onclick="closePopup()">Accept</button>
-        </div>
-    </div>    
+  <div class="button-container">
+    <button class="animated-button" onclick="navigateTo('/action1')"><span>Action 1</span></button>
+    <button class="animated-button" onclick="navigateTo('/action2')"><span>Action 2</span></button>
+    <button class="animated-button" onclick="navigateTo('/action3')"><span>Action 3</span></button>
+    <button class="animated-button" onclick="navigateTo('/action4')"><span>Action 4</span></button>
+  </div>
 
-    <div class="container">
-        <h1>Tutor AI</h1>
-
-        <form method="POST" id="tutorForm" enctype="multipart/form-data">
-            <label for="url">Textbook URL:</label>
-            <input type="text" id="url" name="url">
-
-            <p>Or you can upload a file:</p>
-            <input type="file" id="file" name="file" accept=".pdf">
-
-            <label for="prompt">Question:</label>
-            <input type="text" id="prompt" name="prompt" required>
-
-            <button type="submit" id="submitButton">Ask</button>
-        </form>
-
-        <a href="/how-it-works" class="secondary-button">How It Works</a>
-
-        <div id="result">
-            {% if result %}
-                <p><strong>Question:</strong> {{ result.query }}</p>
-                <p id="answer"><strong>Answer:</strong> {{ result.result }}</p>
-                <script>
-                    const submitButton = document.getElementById('submitButton');
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Ask';
-                    submitButton.style.backgroundColor = '#4CAF50';
-                    const popup = document.getElementById('popup');
-                    console.log("Found popup and set to false")
-                    popup.style.display = 'none';
-                </script>
-            {% endif %}
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const popup = document.getElementById('popup');
-            
-            // Check if the user has already accepted cookies
-            const cookiesAccepted = localStorage.getItem('cookiesAccepted');
-            const urlParams = new URLSearchParams(window.location.search);
-            const submitted = urlParams.get('submitted');  // Check for query parameter
-
-            if (cookiesAccepted === 'true') {
-                popup.style.display = 'none'; // Hide popup if accepted
-            } else if (submitted !== 'true') {
-                popup.style.display = 'flex'; // Show popup only if not submitted
-            }
-
-            // Function to close the popup and store acceptance
-            window.closePopup = function() {
-                popup.style.display = 'none';
-                localStorage.setItem('cookiesAccepted', 'true');
-            };
-
-            const form = document.getElementById('tutorForm');
-            const submitButton = document.getElementById('submitButton');
-            const file = document.getElementById('file');
-            const url = document.getElementById('url');
-
-            form.addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent the default form submission
-
-                if (file.value !== "" || url.value !== "") {
-                    submitButton.disabled = true;
-                    submitButton.textContent = 'Working...';
-                    submitButton.style.backgroundColor = 'grey';
-
-                    // Add query parameter to indicate submission
-                    window.location.search = '?submitted=true';  // Add this query parameter
-                    form.submit();  // Proceed with form submission
-                } else {
-                    submitButton.textContent = 'Please upload a file or provide a URL.';
-                    submitButton.style.backgroundColor = 'red';
-                    setTimeout(() => {
-                        submitButton.textContent = 'Ask';
-                        submitButton.style.backgroundColor = '#4CAF50';
-                    }, 2000);
-                }
-            });
-        });
-
-    </script>
+  <script>
+    // Navigate to the desired route
+    function navigateTo(route) {
+      window.location.href = route;
+    }
+  </script>
 </body>
 </html>
