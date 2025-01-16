@@ -325,7 +325,7 @@ def tutor_ai():
 def how_it_works():
     return render_template('how-it-works.html')
 
-@app.route('/generate-plan', methods=['GET', "POST"])
+@app.route('/study-plan', methods=['GET', "POST"])
 def generate_plan():
     if request.method == "POST":
         if 'file' not in request.files:
@@ -340,9 +340,9 @@ def generate_plan():
         result = generate_plan.invoke({'question' : prompt_data})
         result['result'] = markdown.markdown(result['result'])
         print(result)
-        return render_template("generate-plan.html", result=result)
+        return render_template("study-plan.html", result=result)
 
-    return render_template("generate-plan.html")
+    return render_template("study-plan.html")
 
 
 if __name__ == "__main__":
@@ -350,5 +350,6 @@ if __name__ == "__main__":
     #serve(app, host="0.0.0.0", port=8081)
     # above code is for SERVER
     #below code right now is to debug
-    app.run(port=8080)
     print("Server is running...")
+    app.run(port=8081,debug=True)
+    print("Stopping Server...")
