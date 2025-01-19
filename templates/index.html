@@ -85,6 +85,25 @@
       outline: none;
     }
 
+    button {
+        display: inline-block;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    button[type="submit"]:disabled {
+        background-color: grey;
+        cursor: not-allowed;
+    }
+
     /* Popup Styles */
     .popup {
       position: fixed;
@@ -118,6 +137,7 @@
 
   <h1>Tutor AI</h1>
   <h3>By: Sridhar and Vedant!</h3> 
+  <hr></hr>
   
   <div class="popup" id="popup">
     <div class="popup-content">

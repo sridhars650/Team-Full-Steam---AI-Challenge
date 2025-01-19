@@ -152,12 +152,10 @@ class BaseQAPipeline:
 
     def invoke(self, input_dict):
         question = input_dict.get("question")
-        #here put a if-else that returns true or false depending on if question passes
-        # guardrails checks
-        if (self.guardrails(question) == False):
-          print("It has failed (this is only a message to debug)\n")
-          return "Sorry, please ask another question"
         
+        # if (self.guardrails(question) == False):
+        #   print("It has failed (this is only a message to debug)\n")
+        #   return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
         combined_context = self.build_combined_context()
 
         result = self.qa_chain.invoke({
@@ -166,11 +164,7 @@ class BaseQAPipeline:
         })
 
         self.update_chat_history(question, result['result'])
-        if (self.guardrails(question) == False):
-          print("It has failed (this is only a message to debug)\n")
-          return "Sorry, please ask another question"
-        else:
-          return result
+        return result
 
     def guardrails(self, input):
       #if guardrails return true send back whatever the input is,
@@ -179,6 +173,7 @@ class BaseQAPipeline:
         guard.validate(input)
         return True
       except Exception as e:
+        print(e)
         return False
       
 #Setup GenerateStudyPlan pipeline
@@ -352,4 +347,4 @@ if __name__ == "__main__":
     #below code right now is to debug
     print("Server is running...")
     app.run(port=8081,debug=True)
-    print("Stopping Server...")
+    print("Stopping server...") 
