@@ -153,6 +153,7 @@ class BaseQAPipeline:
     def invoke(self, input_dict):
         question = input_dict.get("question")
         
+        # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
         # if (self.guardrails(question) == False):
         #   print("It has failed (this is only a message to debug)\n")
         #   return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
