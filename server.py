@@ -253,12 +253,11 @@ class GenerateStudyPlan:
 
     def invoke(self, input_dict):
         question = input_dict.get("question")
-        #here put a if-else that returns true or false depending on if question passes
-        # guardrails checks
-        if (self.guardrails(question) == False):
-          print("It has failed (this is only a message to debug)\n")
-          return "Sorry, please ask another question"
         
+        # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
+        # if (self.guardrails(question) == False):
+        #   print("It has failed (this is only a message to debug)\n")
+        #   return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
         combined_context = self.build_combined_context()
 
         result = self.qa_chain.invoke({
@@ -267,20 +266,124 @@ class GenerateStudyPlan:
         })
 
         self.update_chat_history(question, result['result'])
-        if (self.guardrails(question) == False):
-          print("It has failed (this is only a message to debug)\n")
-          return "Sorry, please ask another question"
-        else:
-          return result
+        return result
 
     def guardrails(self, input):
-        #if guardrails return true send back whatever the input is,
-        #else send back an error message
-        try:
-            guard.validate(input)
-            return True
-        except Exception as e:
-            return False
+      #if guardrails return true send back whatever the input is,
+      #else send back an error message
+      try:
+        guard.validate(input)
+        return True
+      except Exception as e:
+        print(e)
+        return False
+#Setup GenerateStudyPlan pipeline
+class Summarizer:
+    def __init__(self):
+        self.doc = "tutor_textbook.pdf"
+        self.loader = PyPDFLoader(self.doc)
+
+        # Load the document and store it in the 'data' variable
+        self.data = self.loader.load_and_split()
+
+        self.embeddings = OpenAIEmbeddings()
+        self.vectordb = Chroma.from_documents(self.data, embedding=self.embeddings,
+                                 persist_directory=".")
+
+        # Initialize a language model with ChatOpenAI
+        self.llm = ChatOpenAI(model_name= 'gpt-3.5-turbo', temperature=0.6)
+
+        #Setup a prompt template
+        template = """\
+            You are an assistant for summarizing the textbook.
+
+        If the user has given a topic or topics, make the summary more focused on those topics.
+
+        Give a nice and detailed summary. 
+
+        Make sure to include all main points given. There can be no points missed 
+        out. The output limit is 5 sentences minimum to 15 sentences maximum. 
+        Use the textbook given ONLY, and give every point that is important and
+        summarize those. 
+
+        If the user states a specific chapter, ONLY GIVE THEM THE SUMMARY OF THAT
+        SPECIFIC CHAPTER. 
+
+        ALWAYS DOUBLE CHECK YOUR RESPONSE AND BE ACCURATE. DON'T TALK ABOUT ANOTHER
+        TOPIC, ONLY GIVE INFORMATION YOU OBTAINED FROM THAT SPECIFIC TOPIC.
+
+        If no query is given from the user, SUMMARIZE THE WHOLE TEXTBOOK GIVEN.
+
+        Question: {question}
+
+        Context: {context}
+
+        Answer:
+
+        """
+
+        prompt = ChatPromptTemplate.from_template(template)
+
+        chain_type_kwargs = {"prompt": prompt}
+
+
+        # 1. Vectorstore-based retriever
+        self.vectorstore_retriever = self.vectordb.as_retriever()
+
+        # Initialize a RetrievalQA chain with the language model and vector database retriever
+        self.qa_chain = RetrievalQA.from_chain_type(self.llm, retriever= self.vectorstore_retriever, chain_type_kwargs=chain_type_kwargs)
+        self.chat_history = []  # Initialize chat history
+
+    def update_chat_history(self, question, answer):
+        self.chat_history.append({"question": question, "answer": answer})
+
+    def build_combined_context(self):
+        """Combine chat history and document context."""
+        # Combine all previous chat history
+        chat_context = "\n".join([f"Q: {entry['question']}\nA: {entry['answer']}" for entry in self.chat_history])
+        
+        # Fetch relevant context from the vector store based on the current question
+        if self.chat_history:
+            current_question = self.chat_history[-1]['question']
+            context_from_db = self.vectorstore_retriever.get_relevant_documents(current_question)
+        else:
+            context_from_db = self.vectorstore_retriever.get_relevant_documents("")
+
+        # Convert the list of context documents into a string
+        context_str = "\n".join([doc.page_content for doc in context_from_db])
+
+        # Combine both chat history and the document context
+        combined_context = f"Chat history:\n{chat_context}\n\nContext from the document:\n{context_str}"
+        
+        return combined_context
+
+
+    def invoke(self, input_dict):
+        question = input_dict.get("question")
+        
+        # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
+        # if (self.guardrails(question) == False):
+        #   print("It has failed (this is only a message to debug)\n")
+        #   return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        combined_context = self.build_combined_context()
+
+        result = self.qa_chain.invoke({
+            "query": question,
+            "context": combined_context
+        })
+
+        self.update_chat_history(question, result['result'])
+        return result
+
+    def guardrails(self, input):
+      #if guardrails return true send back whatever the input is,
+      #else send back an error message
+      try:
+        guard.validate(input)
+        return True
+      except Exception as e:
+        print(e)
+        return False
 
 from flask import Flask, render_template, request, redirect, url_for
 import markdown
@@ -316,6 +419,29 @@ def tutor_ai():
         return render_template("tutor-ai.html", result=result)
 
     return render_template("tutor-ai.html")
+
+@app.route("/summarizer", methods=["GET", "POST"])
+def summarizer():
+    global url_data, prompt_data  # Access global variables
+
+    if request.method == "POST":
+        url_data = request.form.get("url")
+        print("URL: ", url_data)
+        if 'file' not in request.files:
+            print('No file uploaded!')
+        else:
+          file = request.files['file']
+          file.save(filepath)
+          print("File saved:", filepath)
+        if (url_data != ""):
+            subprocess.check_call("curl", url_data, ">", "tutor_textbook.pdf")
+        print("File: ",file)
+        prompt_data = request.form.get("prompt")
+        base_qa_pipeline = Summarizer()
+        result = base_qa_pipeline.invoke({'question' : prompt_data})
+        print(result)
+        return render_template("summarizer.html", result=result)
+    return render_template("summarizer.html")
 
 @app.route('/how-it-works', methods=['GET'])
 def how_it_works():
