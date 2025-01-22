@@ -154,9 +154,9 @@ class BaseQAPipeline:
         question = input_dict.get("question")
         
         # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
-        # if (self.guardrails(question) == False):
-        #   print("It has failed (this is only a message to debug)\n")
-        #   return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        if (self.guardrails(question) == False):
+          print("It has failed (this is only a message to debug)\n")
+          return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
         combined_context = self.build_combined_context()
 
         result = self.qa_chain.invoke({
@@ -277,7 +277,7 @@ class GenerateStudyPlan:
       except Exception as e:
         print(e)
         return False
-#Setup GenerateStudyPlan pipeline
+#Setup Summarizer pipeline
 class Summarizer:
     def __init__(self):
         self.doc = "tutor_textbook.pdf"
@@ -314,11 +314,123 @@ class Summarizer:
 
         If no query is given from the user, SUMMARIZE THE WHOLE TEXTBOOK GIVEN.
 
+        Instead of giving a general summary of a number of pages, write bullet 
+        points in terms of notes that the user can take into their notebook. Make
+        sure to address the main points of the summary and don't generalize 
+        specific topics. Just give bullet point summaries.
+
+        USE MARKDOWN FORMATTING FOR BULLET POINTS. 
+
         Question: {question}
 
         Context: {context}
 
         Answer:
+
+        """
+
+        prompt = ChatPromptTemplate.from_template(template)
+
+        chain_type_kwargs = {"prompt": prompt}
+
+
+        # 1. Vectorstore-based retriever
+        self.vectorstore_retriever = self.vectordb.as_retriever()
+
+        # Initialize a RetrievalQA chain with the language model and vector database retriever
+        self.qa_chain = RetrievalQA.from_chain_type(self.llm, retriever= self.vectorstore_retriever, chain_type_kwargs=chain_type_kwargs)
+        self.chat_history = []  # Initialize chat history
+
+    def update_chat_history(self, question, answer):
+        self.chat_history.append({"question": question, "answer": answer})
+
+    def build_combined_context(self):
+        """Combine chat history and document context."""
+        # Combine all previous chat history
+        chat_context = "\n".join([f"Q: {entry['question']}\nA: {entry['answer']}" for entry in self.chat_history])
+        
+        # Fetch relevant context from the vector store based on the current question
+        if self.chat_history:
+            current_question = self.chat_history[-1]['question']
+            context_from_db = self.vectorstore_retriever.get_relevant_documents(current_question)
+        else:
+            context_from_db = self.vectorstore_retriever.get_relevant_documents("")
+
+        # Convert the list of context documents into a string
+        context_str = "\n".join([doc.page_content for doc in context_from_db])
+
+        # Combine both chat history and the document context
+        combined_context = f"Chat history:\n{chat_context}\n\nContext from the document:\n{context_str}"
+        
+        return combined_context
+
+
+    def invoke(self, input_dict):
+        question = input_dict.get("question")
+        
+        # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
+        # if (self.guardrails(question) == False):
+        #   print("It has failed (this is only a message to debug)\n")
+        #   return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        combined_context = self.build_combined_context()
+
+        result = self.qa_chain.invoke({
+            "query": question,
+            "context": combined_context
+        })
+
+        self.update_chat_history(question, result['result'])
+        return result
+
+    def guardrails(self, input):
+      #if guardrails return true send back whatever the input is,
+      #else send back an error message
+      try:
+        guard.validate(input)
+        return True
+      except Exception as e:
+        print(e)
+        return False
+
+#Setup Quiz pipeline
+class Quiz:
+    def __init__(self):
+        self.doc = "tutor_textbook.pdf"
+        self.loader = PyPDFLoader(self.doc)
+
+        # Load the document and store it in the 'data' variable
+        self.data = self.loader.load_and_split()
+
+        self.embeddings = OpenAIEmbeddings()
+        self.vectordb = Chroma.from_documents(self.data, embedding=self.embeddings,
+                                 persist_directory=".")
+
+        # Initialize a language model with ChatOpenAI
+        self.llm = ChatOpenAI(model_name= 'gpt-3.5-turbo', temperature=0.6)
+
+        #Setup a prompt template
+        template = """\
+            You are an assistant for quizzing topics on the textbook.
+
+         Read through the texbook and generate quiz questions. You have to create 
+        10 different quiz questions. They may be on the same topic or different 
+        topics. If the user has given a query, focus the topic on that query. If 
+        no query has been provided, use the whole textbook and pick topics at random.
+
+        Your response format will ALWAYS be this:
+        *** 
+        Query: (THE USER'S QUERY GOES HERE)
+        Quiz Question: (YOUR GENERATED QUIZ QUESTION GOES HERE)
+        Quiz Answer: (YOUR GENERATED QUIZ ANSWER GOES HERE)
+        Quiz Answer Explanation: (YOUR GENERATED EXPLANATION GOES HERE)
+        ***
+
+        The parenthesis inside the format are where you plug in the parameters if
+        given. Say a user gives a query of "Chapter 1". You plug in the parameter
+        with *** Query: Chapter 1 ***. If no query is given, put in the query field,
+        NO QUERY. 
+
+        Query: {question}
 
         """
 
@@ -465,6 +577,25 @@ def generate_plan():
         return render_template("study-plan.html", result=result)
 
     return render_template("study-plan.html")
+
+@app.route('/quiz', methods=['GET', "POST"])
+def quiz():
+    if request.method == "POST":
+        if 'file' not in request.files:
+            print('No file uploaded!')
+        else:
+          file = request.files['file']
+          file.save(filepath)
+          print("File saved:", filepath)
+        print("File: ",file)
+        prompt_data = request.form.get("prompt")
+        quiz = Quiz()
+        result = quiz.invoke({'question' : prompt_data})
+        result['result'] = markdown.markdown(result['result'])
+        print(result)
+        return render_template("quiz.html", result=result)
+
+    return render_template("quiz.html")
 
 
 if __name__ == "__main__":

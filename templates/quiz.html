@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Bot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: radial-gradient(circle, #FFDD00, #FF5722);
+            color: #222;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+
+        h1 {
+            text-align: center;
+            color: #FF5722;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #444;
+        }
+
+        input[type="text"],
+        textarea,
+        input[type="file"] {
+            padding: 15px;
+            border: 2px solid #FF5722;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        input[type="file"]:focus {
+            border-color: #FFDD00;
+        }
+
+        button {
+            padding: 14px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"] {
+            background-color: #FF5722;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #FF4500;
+        }
+
+        button[type="submit"]:disabled {
+            background-color: grey;
+            cursor: not-allowed;
+        }
+
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 450px;
+        }
+
+        .popup-content button {
+            margin-top: 15px;
+            padding: 12px 25px;
+            background-color: #FF5722;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #FAFAFA;
+            border: 2px solid #FF5722;
+            border-radius: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <p>We use cookies to enhance your experience. By continuing, you consent to our privacy policy.</p>
+            <button onclick="closePopup()">Accept</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Quiz Bot</h1>
+
+        <form method="POST" id="quizBotForm" enctype="multipart/form-data">
+            <label for="question">Enter your topic:</label>
+            <input type="text" id="question" name="question" placeholder="Type your question here" required>
+
+            <p>And upload a textbook:</p>
+            <input type="file" id="file" name="file" accept=".pdf">
+
+            <button type="submit" id="submitButton">Ask Quiz Bot</button>
+        </form>
+
+        <div id="result">
+            {% if result %}
+                <p><strong>Question:</strong> {{ result.query | safe}}</p>
+                <p id="answer"><strong>Answer:</strong> {{ result.result | safe }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const popup = document.getElementById('popup');
+            const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+
+            if (cookiesAccepted === 'true') {
+                popup.style.display = 'none';
+            }
+
+            window.closePopup = function () {
+                popup.style.display = 'none';
+                localStorage.setItem('cookiesAccepted', 'true');
+            };
+
+            const form = document.getElementById('quizBotForm');
+            const submitButton = document.getElementById('submitButton');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                if (question.value !== "" || file.value !== "") {
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Processing...';
+                    submitButton.style.backgroundColor = 'grey';
+
+                    // Add query parameter to indicate submission
+                    window.location.search = '?submitted=true';
+                    form.submit();
+                } else {
+                    submitButton.textContent = 'Provide input first!';
+                    submitButton.style.backgroundColor = 'red';
+                    setTimeout(() => {
+                        submitButton.textContent = 'Ask Quiz Bot';
+                        submitButton.style.backgroundColor = '#FF5722';
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
