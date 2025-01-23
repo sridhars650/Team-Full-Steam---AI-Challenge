@@ -133,13 +133,15 @@
     <div class="container">
         <h1>Quiz Challenge</h1>
 
-        <div class="question" id="question">What is the capital of France?</div>
+        <!-- Question from the AI result -->
+        <div class="question" id="question">{{ question }}</div>
 
         <div class="options">
-            <button class="option" data-value="Paris">Paris</button>
-            <button class="option" data-value="London">London</button>
-            <button class="option" data-value="Berlin">Berlin</button>
-            <button class="option" data-value="Rome">Rome</button>
+            <!-- Add options dynamically, based on the AI result -->
+            <button class="option" data-value="{{ answer }}">{{ answer }}</button>
+            <button class="option" data-value="Other Answer">Other Answer</button>
+            <button class="option" data-value="Another Answer">Another Answer</button>
+            <button class="option" data-value="Yet Another Answer">Yet Another Answer</button>
         </div>
 
         <div id="feedback" class="feedback" style="display: none;"></div>

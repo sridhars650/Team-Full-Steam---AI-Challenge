@@ -1,0 +1,61 @@
+Question: 1) What was the Facebook quiz app "This is Your Digital Life" and how was it used?
+2) How has the explosive growth in digital technologies radically altered our expectations?
+3) In what ways have cameras and the Internet changed the meaning of "public"?
+4) What information do printers give and how do they do this?
+5) What are "web bugs" and what do they do?
+6) How did Joseph James DeAngelo's DNA end up on the Internet?
+7) What are the "Fair Information Practice Principles" (FIPP)?
+8) What is HIPAA and how is it used?
+9) Can the Internet be censored and what did the Chinese government censor?
+10) What are the three kinds of Internet gatekeepers mentioned by the authors?
+11) What was the first Internet called, who put it together, and what were the two biggest concerns that this Internet provided?
+12) What were researcher Paul Baran's contributions to the Internet?
+13) What is IP and how does it work?
+14) What does it mean to have an Internet address and how does a packet know where it is going?
+15) What is net neutrality?
+16) How did Google categorize websites so searches worked well and what made Google profitable from the start?
+17) What is the "network effect"?\nAnswer: I don't know the answer to your question.\n--------------------------------------------------\n\nQuestion: 1) Describe the Facebook quiz app "This is Your Digital Life" and how it was used.
+2) How has the explosive growth in digital technologies radically altered our expectations?
+3) In what ways have cameras and the Internet changed the meaning of "public"?
+4) What information do printers give and how do they do this?
+5) What are "web bugs" and what do they do?
+6) How did Joseph James DeAngelo's DNA end up on the Internet?
+7) Explain the "Fair Information Practice Principles" (FIPP).
+8) What is HIPAA and how is it used?
+9) Can the Internet be censored? Provide an example of what the Chinese government censored.
+10) What are the three kinds of Internet gatekeepers mentioned by the authors?
+11) What was the first Internet called, who put it together, and what were the two biggest concerns it provided?
+12) What were researcher Paul Baran's contributions to the internet?
+13) What is IP and how does it work?
+14) What does it mean to have an internet address and how does a packet know where it is going?
+15) Define net neutrality.
+16) How did Google categorize web sites so searches worked well and what made Google profitable from the start?
+17) Explain the concept of the "network effect."\nAnswer: I'm sorry, but I can't provide answers to these questions as they are specific to a text or study material that I don't have access to.\n--------------------------------------------------\n\nQuestion: 1. How does biased data in facial recognition algorithms impact the accuracy and fairness of these systems, especially concerning race and gender, in the context of privacy concerns and regulatory frameworks in the digital age?
+
+2. What are the potential risks and ethical concerns associated with algorithmic decision-making in various domains, such as pricing strategies in online marketplaces and automated trading in stock markets, considering the implications for consumer protection and market competition?
+
+3. How can the use of machine learning and deep learning technologies in AI systems raise privacy issues, labor concerns, and competitive advantages based on data processing capabilities, within the framework of data protection regulations and ethical considerations?
+
+4. In what ways can the reliance on large training data sets for machine learning systems raise questions about privacy, labor practices, and competitive advantages in the digital age, taking into account the impact on data security and regulatory compliance?\nAnswer: 1. Biased data in facial recognition algorithms can lead to inaccuracies and unfairness, particularly concerning race and gender. This can result in misidentifications and discriminatory outcomes. Privacy concerns arise when these systems are used without transparency or accountability. Regulatory frameworks are needed to address these biases and ensure that facial recognition technology is used ethically and fairly.
+
+2. The potential risks of algorithmic decision-making in pricing strategies and automated trading include price manipulation, market instability, and unfair competition. Ethical concerns revolve around consumer protection, as algorithms can exploit vulnerabilities and engage in price discrimination. Regulatory oversight is crucial to safeguard consumers and maintain market integrity.
+
+3. The use of machine learning and deep learning technologies in AI systems can raise privacy issues by collecting and processing vast amounts of personal data. Labor concerns may arise from automation replacing human jobs. Competitive advantages based on data processing capabilities can lead to monopolistic practices. Data protection regulations and ethical considerations are essential to address these challenges.
+
+4. Reliance on large training data sets for machine learning systems can raise privacy concerns due to the collection and storage of massive amounts of data. Labor practices may be impacted by automation displacing workers. Competitive advantages based on data processing capabilities can create disparities in the market. Data security and regulatory compliance are critical to address these issues and protect individuals' rights.\n--------------------------------------------------\n\nQuestion: 1. How does the case of Tanya Andersen illustrate the consequences of automated justice in the digital age, particularly in relation to copyright infringement and legal penalties? What ethical considerations are raised by the challenges faced by individuals like Tanya Andersen?
+
+2. What are the implications of automated policing in cases of illegal downloading, such as lawsuits filed by the RIAA for copyright infringement? How do statutory damages for copyright infringement present challenges in the digital age, especially in cases involving the RIAA?
+
+3. How does the proliferation of digital technology impact the enforcement of copyright laws and the safeguarding of intellectual property rights in the context of online file-sharing and music distribution? What potential consequences arise from the criminalization of technology in relation to copyright protection, as evidenced in cases like DVD Copy Control Association v. Kaleidescape, Inc.?
+
+4. How does facial recognition technology raise concerns about bias and discrimination, as demonstrated by the case of Joy Buolamwini and the Algorithmic Justice League? What implications do these biases have in practical applications like law enforcement and surveillance systems?
+
+5. In what ways do AI algorithms in the justice system, such as Northpointe's COMPAS, raise questions about transparency, accountability, and fairness in decision-making processes like bail hearings and sentencing? What are the potential risks associated with relying on opaque decision systems in the legal system?\nAnswer: 1. I don't have specific information on the case of Tanya Andersen or the ethical considerations raised by challenges in automated justice related to copyright infringement. 
+
+2. I don't have detailed information on the implications of automated policing in cases of illegal downloading or the challenges presented by statutory damages for copyright infringement involving the RIAA.
+
+3. I don't have specific details on how the proliferation of digital technology impacts the enforcement of copyright laws or the criminalization of technology in relation to copyright protection.
+
+4. Facial recognition technology raising concerns about bias and discrimination, as demonstrated by cases like Joy Buolamwini's, is a valid concern. These biases can have significant implications in law enforcement and surveillance systems, potentially leading to discriminatory outcomes.
+
+5. AI algorithms in the justice system, like Northpointe's COMPAS, do raise questions about transparency, accountability, and fairness in decision-making processes. The risks associated with relying on opaque decision systems in the legal system include potential biases, lack of explainability, and unfair outcomes.\n--------------------------------------------------\n\n

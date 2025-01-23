@@ -8,6 +8,15 @@ from langchain_openai import ChatOpenAI #for getting an LLM for QA chain
 #from langchain_core.output_parsers import StrOutputParser #Not used currently, leaving, as can be used for parsing output from LLM
 #from langchain_core.runnables import RunnablePassthrough #Not used currently, leaving, as can be used for getting LLM output
 from langchain.prompts import ChatPromptTemplate #for setting up prompts
+from langchain.text_splitter import TokenTextSplitter
+from langchain.document_loaders import PyPDFLoader
+from langchain.docstore.document import Document
+from langchain.chat_models import ChatOpenAI
+from langchain.chains.summarize import load_summarize_chain
+from prompts import PROMPT_QUESTIONS, REFINE_PROMPT_QUESTIONS
+from langchain.chains import RetrievalQA
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
 
 
 #Guardrails stuff
@@ -174,104 +183,68 @@ class BaseQAPipeline:
       
 #Setup GenerateStudyPlan pipeline
 class GenerateStudyPlan:
-    def __init__(self):
-        self.doc = "tutor_textbook.pdf"
-        self.loader = PyPDFLoader(self.doc)
+    # Load data from PDF
+    file_path = "tutor_textbook.pdf"
 
-        # Load the document and store it in the 'data' variable
-        self.data = self.loader.load_and_split()
+    loader = PyPDFLoader(file_path)
+    data = loader.load()
 
-        self.embeddings = OpenAIEmbeddings()
-        self.vectordb = Chroma.from_documents(self.data, embedding=self.embeddings,
-                                 persist_directory=".")
+    # Combine text from Document into one string for question generation
+    text_question_gen = ''
+    for page in data:
+        text_question_gen += page.page_content
 
-        # Initialize a language model with ChatOpenAI
-        self.llm = ChatOpenAI(model_name= 'gpt-3.5-turbo', temperature=0.6)
+    # Initialize Text Splitter for question generation
+    text_splitter_question_gen = TokenTextSplitter(model_name="gpt-3.5-turbo", chunk_size=10000, chunk_overlap=200)
 
-        #Setup a prompt template
-        template = """\
-            You are an assistant for generating study plans on a singular subject.
+    # Split text into chunks for question generation
+    text_chunks_question_gen = text_splitter_question_gen.split_text(text_question_gen)
 
-        Use the following pieces of retrieved context to answer the question.
+    # Convert chunks into Documents for question generation
+    docs_question_gen = [Document(page_content=t) for t in text_chunks_question_gen]
 
-        If the user has given a topic to study or topics that they need focus on,
-        make the plan more focused on those topics.
+    # Initialize Text Splitter for answer generation
+    text_splitter_answer_gen = TokenTextSplitter(model_name="gpt-3.5-turbo", chunk_size=1000, chunk_overlap=100)
 
-        Give a nice and detailed study plan. If the user doesnt specify a type of 
-        study plan (schedule wise), you can come up with your own, hourly or daily 
-        plan, or you can ask the user to give the same instructions but with the 
-        study plan of their choice. 
+    # Split documents into chunks for answer generation
+    docs_answer_gen = text_splitter_answer_gen.split_documents(docs_question_gen)
 
-        Question: {question}
+    # Initialize Large Language Model for question generation
+    llm_question_gen = ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"),temperature=0.4, model="gpt-3.5-turbo")
 
-        Context: {context}
+    # Initialize question generation chain
+    question_gen_chain = load_summarize_chain(llm = llm_question_gen, chain_type = "refine", verbose = True, question_prompt=PROMPT_QUESTIONS, refine_prompt=REFINE_PROMPT_QUESTIONS)
 
-        Answer:
+    # Run question generation chain
+    questions = question_gen_chain.run(docs_question_gen)
 
-        """
+    # Initialize Large Language Model for answer generation
+    llm_answer_gen = ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"),temperature=0.1, model="gpt-3.5-turbo")
 
-        prompt = ChatPromptTemplate.from_template(template)
+    # Create vector database for answer generation
+    embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
 
-        chain_type_kwargs = {"prompt": prompt}
+    # Initialize vector store for answer generation
+    vector_store = Chroma.from_documents(docs_answer_gen, embeddings)
 
+    # Initialize retrieval chain for answer generation
+    answer_gen_chain = RetrievalQA.from_chain_type(llm=llm_answer_gen, chain_type="stuff", retriever=vector_store.as_retriever(k=2))
 
-        # 1. Vectorstore-based retriever
-        self.vectorstore_retriever = self.vectordb.as_retriever()
+    # Split generated questions into a list of questions
+    question_list = questions.split("\\n")
 
-        # Initialize a RetrievalQA chain with the language model and vector database retriever
-        self.qa_chain = RetrievalQA.from_chain_type(self.llm, retriever= self.vectorstore_retriever, chain_type_kwargs=chain_type_kwargs)
-        self.chat_history = []  # Initialize chat history
+    # Answer each question and save to a file
+    for question in question_list:
+        # print("Question: ", question)
+        # answer = answer_gen_chain.run(question)
+        # print("Answer: ", answer)
+        # print("--------------------------------------------------\\n\\n")
+        # Save answer to file
+        with open("answers.txt", "a") as f:
+            f.write("Question: " + question + "\\n")
+            f.write("Answer: " + answer + "\\n")
+            f.write("--------------------------------------------------\\n\\n")
 
-    def update_chat_history(self, question, answer):
-        self.chat_history.append({"question": question, "answer": answer})
-
-    def build_combined_context(self):
-        """Combine chat history and document context."""
-        # Combine all previous chat history
-        chat_context = "\n".join([f"Q: {entry['question']}\nA: {entry['answer']}" for entry in self.chat_history])
-        
-        # Fetch relevant context from the vector store based on the current question
-        if self.chat_history:
-            current_question = self.chat_history[-1]['question']
-            context_from_db = self.vectorstore_retriever.get_relevant_documents(current_question)
-        else:
-            context_from_db = self.vectorstore_retriever.get_relevant_documents("")
-
-        # Convert the list of context documents into a string
-        context_str = "\n".join([doc.page_content for doc in context_from_db])
-
-        # Combine both chat history and the document context
-        combined_context = f"Chat history:\n{chat_context}\n\nContext from the document:\n{context_str}"
-        
-        return combined_context
-
-
-    def invoke(self, input_dict):
-        question = input_dict.get("question")
-        
-        # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
-        if (self.guardrails(question) == False):
-          print("It has failed (this is only a message to debug)\n")
-          return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
-        combined_context = self.build_combined_context()
-
-        result = self.qa_chain.invoke({
-            "query": question,
-            "context": combined_context
-        })
-
-        self.update_chat_history(question, result['result'])
-        return result
-
-    def guardrails(self, input):
-      #if guardrails return true send back whatever the input is,
-      #else send back an error message
-      try:
-        guard.validate(input)
-        return True
-      except Exception as e:
-        print(e)
-        return False
 #Setup Summarizer pipeline
 class Summarizer:
     def __init__(self):
@@ -496,6 +469,7 @@ class QuizAI:
 
 from flask import Flask, render_template, request, redirect, url_for
 import markdown
+from bs4 import BeautifulSoup
 
 filepath = "./tutor_textbook.pdf"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx', 'png', 'jpg', 'jpeg', 'gif'}
@@ -596,12 +570,28 @@ def quiz_maker():
             result['result'] = markdown.markdown(result['result'])
         except Exception:
             result = {"result": "An error occurred while processing the quiz data."}
-        
-        print(result)
-        return render_template("quiz.html", result=result)
+    
+        # Parse the result HTML to extract the question, answer, and explanation
+        soup = BeautifulSoup(result['result'], 'html.parser')
+
+        # Extract the relevant parts
+        try:
+            # Ensure we have enough <p> elements
+            paragraphs = soup.find_all('p')
+            if len(paragraphs) >= 4:
+                question = paragraphs[1].text.split(':')[1].strip()
+                answer = paragraphs[2].text.split(':')[1].strip()
+                explanation = paragraphs[3].text.split(':')[1].strip()
+            else:
+                raise ValueError("Insufficient <p> tags in the result HTML.")
+        except Exception as e:
+            # Handle the case where there are not enough <p> tags or the content is malformed
+            return f"Error parsing the quiz result: {str(e)}", 500
+
+        # Pass the parsed data to the template
+        return render_template('generated-quiz.html', question=question, answer=answer, explanation=explanation)
 
     return render_template("quiz.html")
-
 
 @app.route('/generated-quiz', methods=['GET'])
 def generated_quiz():
@@ -611,15 +601,29 @@ def generated_quiz():
         ai_result = {
             'query': 'Quiz me on Chapter 1.',
             'context': 'Chat history:\n\n\nContext from the document:\nThis page intentionally left blank\nThis page intentionally left blank\nThis page intentionally left blank\nThis page intentionally left blank',
-            'result': '''<hr />\n<p>Query: Quiz me on Chapter 1\nQuiz Question: What is the main topic covered in Chapter 1 of the textbook?\nQuiz Answer: The main topic covered in Chapter 1 is introduction to the subject.\nQuiz Answer Explanation: Chapter 1 typically serves as an introduction to the subject matter of the textbook, providing an overview of what will be discussed in the following chapters.</p>\n<hr />'''
+            'result': '''<hr />\n<p>Query: Quiz me on Chapter 1</p>
+                         <p>Quiz Question: What is the main topic covered in Chapter 1 of the textbook?</p>
+                         <p>Quiz Answer: The main topic covered in Chapter 1 is introduction to the subject.</p>
+                         <p>Quiz Answer Explanation: Chapter 1 typically serves as an introduction to the subject matter of the textbook, providing an overview of what will be discussed in the following chapters.</p>
+                         <hr />'''
         }
 
         # Parse the result HTML to extract the question, answer, and explanation
-        from bs4 import BeautifulSoup
         soup = BeautifulSoup(ai_result['result'], 'html.parser')
-        question = soup.find('p').text.split(':')[1].strip()
-        answer = soup.find_all('p')[1].text.split(':')[1].strip()
-        explanation = soup.find_all('p')[2].text.split(':')[1].strip()
+
+        # Extract the relevant parts
+        try:
+            # Ensure we have enough <p> elements
+            paragraphs = soup.find_all('p')
+            if len(paragraphs) >= 4:
+                question = paragraphs[1].text.split(':')[1].strip()
+                answer = paragraphs[2].text.split(':')[1].strip()
+                explanation = paragraphs[3].text.split(':')[1].strip()
+            else:
+                raise ValueError("Insufficient <p> tags in the result HTML.")
+        except Exception as e:
+            # Handle the case where there are not enough <p> tags or the content is malformed
+            return f"Error parsing the quiz result: {str(e)}", 500
 
         # Pass the parsed data to the template
         return render_template('generated-quiz.html', question=question, answer=answer, explanation=explanation)
