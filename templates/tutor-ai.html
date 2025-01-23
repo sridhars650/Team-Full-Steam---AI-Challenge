@@ -6,23 +6,29 @@
     <title>Tutor AI</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4CAF50, #007BFF);
+            color: #333;
         }
 
         .container {
             max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            width: 90%;
+            padding: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
         h1 {
             text-align: center;
+            margin-bottom: 20px;
             color: #333;
         }
 
@@ -33,27 +39,30 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
+            color: #555;
+            font-weight: bold;
         }
 
         input[type="text"],
         textarea,
         input[type="file"] {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 6px;
             box-sizing: border-box;
             margin-bottom: 15px;
+            font-size: 14px;
         }
 
         button {
             display: inline-block;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s;
         }
 
         button[type="submit"] {
@@ -66,12 +75,15 @@
             cursor: not-allowed;
         }
 
+        button[type="submit"]:hover:not(:disabled) {
+            background-color: #45a049;
+        }
 
         #result {
             margin-top: 20px;
-            padding: 10px;
+            padding: 15px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 6px;
             background-color: #f9f9f9;
         }
 
@@ -89,16 +101,28 @@
         }
 
         .popup-content {
-            background-color: #fff;
+            background-color: white;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             text-align: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             max-width: 400px;
+            width: 90%;
         }
 
         .popup-content button {
             margin-top: 10px;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .popup-content button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -108,7 +132,7 @@
             <p>We use cookies and track data to enhance your experience, provide personalized study plans, and enable features like uploading files with OpenAI. By continuing, you consent to our use of cookies and data processing practices in line with our privacy policy.</p>
             <button onclick="closePopup()">Accept</button>
         </div>
-    </div>    
+    </div>
 
     <div class="container">
         <h1>Tutor AI</h1>
@@ -136,7 +160,6 @@
                     submitButton.textContent = 'Ask';
                     submitButton.style.backgroundColor = '#4CAF50';
                     const popup = document.getElementById('popup');
-                    console.log("Found popup and set to false")
                     popup.style.display = 'none';
                 </script>
             {% endif %}
@@ -146,19 +169,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const popup = document.getElementById('popup');
-            
-            // Check if the user has already accepted cookies
+
             const cookiesAccepted = localStorage.getItem('cookiesAccepted');
             const urlParams = new URLSearchParams(window.location.search);
-            const submitted = urlParams.get('submitted');  // Check for query parameter
+            const submitted = urlParams.get('submitted');
 
             if (cookiesAccepted === 'true') {
-                popup.style.display = 'none'; // Hide popup if accepted
+                popup.style.display = 'none';
             } else if (submitted !== 'true') {
-                popup.style.display = 'flex'; // Show popup only if not submitted
+                popup.style.display = 'flex';
             }
 
-            // Function to close the popup and store acceptance
             window.closePopup = function() {
                 popup.style.display = 'none';
                 localStorage.setItem('cookiesAccepted', 'true');
@@ -170,16 +191,15 @@
             const url = document.getElementById('url');
 
             form.addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent the default form submission
+                event.preventDefault();
 
                 if (file.value !== "" || url.value !== "") {
                     submitButton.disabled = true;
                     submitButton.textContent = 'Working...';
                     submitButton.style.backgroundColor = 'grey';
 
-                    // Add query parameter to indicate submission
-                    window.location.search = '?submitted=true';  // Add this query parameter
-                    form.submit();  // Proceed with form submission
+                    window.location.search = '?submitted=true';
+                    form.submit();
                 } else {
                     submitButton.textContent = 'Please upload a file or provide a URL.';
                     submitButton.style.backgroundColor = 'red';
@@ -190,7 +210,6 @@
                 }
             });
         });
-
     </script>
 </body>
 </html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Challenge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #4CAF50, #007BFF);
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            padding: 40px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .options {
+            margin-bottom: 20px;
+        }
+
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .options button:hover {
+            background-color: #007BFF;
+        }
+
+        .options button.correct {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .options button.incorrect {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .options button.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Override the disabled state for incorrect buttons */
+        .options button.incorrect.disabled {
+            background-color: #dc3545 !important;
+        }
+
+        .options button.correct.disabled {
+            background-color: #28a745 !important;
+        }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        .correct {
+            background-color: #d1e7dd;
+            border: 1px solid #badbcc;
+            color: #0f5132;
+        }
+
+        .incorrect {
+            background-color: #f8d7da;
+            border: 1px solid #f5c2c7;
+            color: #842029;
+        }
+
+        .explanation {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Challenge</h1>
+
+        <div class="question" id="question">What is the capital of France?</div>
+
+        <div class="options">
+            <button class="option" data-value="Paris">Paris</button>
+            <button class="option" data-value="London">London</button>
+            <button class="option" data-value="Berlin">Berlin</button>
+            <button class="option" data-value="Rome">Rome</button>
+        </div>
+
+        <div id="feedback" class="feedback" style="display: none;"></div>
+
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const questionElement = document.getElementById('question');
+            const feedback = document.getElementById('feedback');
+            const options = document.querySelectorAll('.option');
+            let selectedAnswer = null;
+
+            // Sample AI result
+            const aiResult = {
+                question: "What is the capital of France?",
+                correct_answer: "Paris",
+                explanation: "The capital of France is Paris, which is known for its culture, history, and landmarks like the Eiffel Tower."
+            };
+
+            // Load AI question
+            questionElement.textContent = aiResult.question;
+
+            // Handle option selection
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    // If an answer is already selected, remove the color classes
+                    if (selectedAnswer) {
+                        selectedAnswer.classList.remove('correct', 'incorrect');
+                    }
+                    selectedAnswer = option;
+                    selectedAnswer.classList.add('selected');
+
+                    // Disable all options after selection
+                    options.forEach(opt => opt.classList.add('disabled'));
+
+                    const userResponse = selectedAnswer.getAttribute('data-value').trim();
+
+                    // Check answer and apply feedback
+                    if (userResponse.toLowerCase() === aiResult.correct_answer.toLowerCase()) {
+                        selectedAnswer.classList.add('correct');
+                        feedback.className = 'feedback correct';
+                        feedback.innerHTML = `<p>Correct! 🎉</p><div class="explanation">${aiResult.explanation}</div>`;
+                    } else {
+                        selectedAnswer.classList.add('incorrect');
+                        selectedAnswer.classList.add('disabled');
+                        feedback.className = 'feedback incorrect';
+                        feedback.innerHTML = `<p>Incorrect. ❌</p><div class="explanation">${aiResult.explanation}</div>`;
+                    }
+
+                    // Display feedback
+                    feedback.style.display = 'block';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

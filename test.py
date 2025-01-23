@@ -12,7 +12,7 @@ from guardrails import Guard
 guard = Guard().use_many(
     BiasCheck(
         threshold=0.5,
-        on_fail="exception"
+        on_fail="fix"
     ),
 
     NSFWText(
@@ -21,27 +21,27 @@ guard = Guard().use_many(
     ),
 
     ProfanityFree(
-        on_fail = "exception"
+        on_fail = "fix"
     ),
 
     LogicCheck(
         model="gpt-3.5-turbo",
-        on_fail="exception"
+        on_fail="fix"
     ),
 
     MentionsDrugs(
-        on_fail = "exception"
+        on_fail = "fix"
     ),
 
     PolitenessCheck(
         llm_callable="gpt-3.5-turbo",
-        on_fail = "exception"
+        on_fail = "fix"
     ),
 
     ToxicLanguage(
         threshold=0.5,
         validation_method="sentence",
-        on_fail="exception"
+        on_fail="fix"
     )
 
 )
@@ -58,7 +58,7 @@ class Test:
             print(e)
             return False
     def test(self):
-        print("Result: " + self.guardrails("What is an EDR?"))
+        print("Result: " + str(self.guardrails("What is an EDR?")))
 
 
 test = Test()

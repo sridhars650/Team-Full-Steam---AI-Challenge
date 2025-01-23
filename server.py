@@ -30,7 +30,7 @@ from guardrails import Guard
 guard = Guard().use_many(
     BiasCheck(
         threshold=0.5,
-        on_fail="exception"
+        on_fail="fix"
     ),
 
     NSFWText(
@@ -39,36 +39,32 @@ guard = Guard().use_many(
     ),
 
     ProfanityFree(
-        on_fail = "exception"
+        on_fail = "fix"
     ),
 
     LogicCheck(
         model="gpt-3.5-turbo",
-        on_fail="exception"
+        on_fail="fix"
     ),
 
     MentionsDrugs(
-        on_fail = "exception"
+        on_fail = "fix"
     ),
 
     PolitenessCheck(
         llm_callable="gpt-3.5-turbo",
-        on_fail = "exception"
+        on_fail = "fix"
     ),
 
     ToxicLanguage(
         threshold=0.5,
         validation_method="sentence",
-        on_fail="exception"
+        on_fail="fix"
     )
 
 )
 
-try:
-  guard.validate("I hate you!")
-  print("hello")
-except Exception as e:
-  print(e)
+
 
 #Setup Base QA system pipeline
 class BaseQAPipeline:
@@ -153,7 +149,6 @@ class BaseQAPipeline:
     def invoke(self, input_dict):
         question = input_dict.get("question")
         
-        # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
         if (self.guardrails(question) == False):
           print("It has failed (this is only a message to debug)\n")
           return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
@@ -255,9 +250,9 @@ class GenerateStudyPlan:
         question = input_dict.get("question")
         
         # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
-        # if (self.guardrails(question) == False):
-        #   print("It has failed (this is only a message to debug)\n")
-        #   return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        if (self.guardrails(question) == False):
+          print("It has failed (this is only a message to debug)\n")
+          return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
         combined_context = self.build_combined_context()
 
         result = self.qa_chain.invoke({
@@ -393,7 +388,7 @@ class Summarizer:
         return False
 
 #Setup Quiz pipeline
-class Quiz:
+class QuizAI:
     def __init__(self):
         self.doc = "tutor_textbook.pdf"
         self.loader = PyPDFLoader(self.doc)
@@ -431,6 +426,8 @@ class Quiz:
         NO QUERY. 
 
         Query: {question}
+
+        Context: {context}
 
         """
 
@@ -502,6 +499,7 @@ import markdown
 
 filepath = "./tutor_textbook.pdf"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx', 'png', 'jpg', 'jpeg', 'gif'}
+QUIZGENERATED = False
 app = Flask(__name__)
 
 @app.route("/",methods=["GET"])
@@ -579,7 +577,8 @@ def generate_plan():
     return render_template("study-plan.html")
 
 @app.route('/quiz', methods=['GET', "POST"])
-def quiz():
+def quiz_maker():
+    global QUIZGENERATED
     if request.method == "POST":
         if 'file' not in request.files:
             print('No file uploaded!')
@@ -589,14 +588,43 @@ def quiz():
           print("File saved:", filepath)
         print("File: ",file)
         prompt_data = request.form.get("prompt")
-        quiz = Quiz()
+        quiz = QuizAI()
+        print(prompt_data)
         result = quiz.invoke({'question' : prompt_data})
-        result['result'] = markdown.markdown(result['result'])
+        QUIZGENERATED = True
+        try:
+            result['result'] = markdown.markdown(result['result'])
+        except Exception:
+            result = {"result": "An error occurred while processing the quiz data."}
+        
         print(result)
         return render_template("quiz.html", result=result)
 
     return render_template("quiz.html")
 
+
+@app.route('/generated-quiz', methods=['GET'])
+def generated_quiz():
+    global QUIZGENERATED
+    if QUIZGENERATED:
+        # The AI result data you provided
+        ai_result = {
+            'query': 'Quiz me on Chapter 1.',
+            'context': 'Chat history:\n\n\nContext from the document:\nThis page intentionally left blank\nThis page intentionally left blank\nThis page intentionally left blank\nThis page intentionally left blank',
+            'result': '''<hr />\n<p>Query: Quiz me on Chapter 1\nQuiz Question: What is the main topic covered in Chapter 1 of the textbook?\nQuiz Answer: The main topic covered in Chapter 1 is introduction to the subject.\nQuiz Answer Explanation: Chapter 1 typically serves as an introduction to the subject matter of the textbook, providing an overview of what will be discussed in the following chapters.</p>\n<hr />'''
+        }
+
+        # Parse the result HTML to extract the question, answer, and explanation
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(ai_result['result'], 'html.parser')
+        question = soup.find('p').text.split(':')[1].strip()
+        answer = soup.find_all('p')[1].text.split(':')[1].strip()
+        explanation = soup.find_all('p')[2].text.split(':')[1].strip()
+
+        # Pass the parsed data to the template
+        return render_template('generated-quiz.html', question=question, answer=answer, explanation=explanation)
+
+    return "404 Not Found", 404
 
 if __name__ == "__main__":
     #from waitress import serve

@@ -5,113 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Custom Study Plan</title>
     <style>
-        * {
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #4CAF50, #007BFF);
             color: #333;
         }
 
-        header {
+        .container {
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
             text-align: center;
-            padding: 20px 0;
         }
 
         h1 {
-            font-size: 2.5rem;
             margin-bottom: 10px;
+            font-size: 2rem;
+            color: #333;
         }
 
         p {
-            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #555;
         }
 
-        .content {
-            padding: 30px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            text-align: left;
         }
 
         label {
-            display: block;
             font-weight: bold;
             margin-bottom: 8px;
+            display: block;
+            color: #555;
         }
 
         input[type="text"],
-        input[type="file"],
-        textarea {
+        textarea,
+        input[type="file"] {
             width: 100%;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 12px;
             border: 1px solid #ccc;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        button.submit-btn {
+        input:focus,
+        textarea:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button[type="submit"] {
             background-color: #4CAF50;
             color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.2rem;
         }
 
-        button.submit-btn:hover {
+        button[type="submit"]:hover {
             background-color: #45a049;
+        }
+
+        button[type="submit"]:disabled {
+            background-color: grey;
+            cursor: not-allowed;
         }
 
         .result {
             margin-top: 20px;
-            padding: 15px; /* Increased padding for better spacing */
-            background-color: #eaf0e6;
-            border: 1px solid #d1e3d1;
-            border-radius: 5px;
-            line-height: 1.6; /* Better readability */
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: left;
+            color: #333;
         }
 
-        .result ol, .result ul {
-            margin-left: 20px; /* Indentation for lists */
-            padding-left: 20px; /* Extra space to keep lists inside the container */
-        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
 
-        .result li {
-            margin-bottom: 10px; /* Spacing between list items */
-        }
+            p {
+                font-size: 0.9rem;
+            }
 
-        .result h3 {
-            margin-bottom: 15px; /* Space below the title */
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
         }
-
-        .result p {
-            margin-bottom: 10px; /* Space between paragraphs inside the result */
-        }
-
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 15px 0;
-            margin-top: 30px;
-        }
-
     </style>
 </head>
 <body>
@@ -120,7 +139,7 @@
             <h1>Custom Study Plan</h1>
             <p>Create a personalized study plan to help you succeed!</p>
         </header>
-        <section class="content"></section>
+        <section class="content">
             <form action="/study-plan" method="POST" enctype="multipart/form-data">
                 <div class="input-group">
                     <label for="file">Upload a file for reference:</label>
@@ -129,9 +148,9 @@
 
                 <div class="input-group">
                     <label for="prompt">What do you need help with? (Enter a prompt):</label>
-                    <textarea id="prompt" name="prompt" placeholder="Write your prompt here..." rows="4"></textarea>
+                    <textarea id="prompt" name="prompt" placeholder="Write your prompt here..."></textarea>
                 </div>
- 
+
                 <button type="submit" class="submit-btn">Generate Study Plan</button>
             </form>
 
@@ -141,22 +160,17 @@
                 {{ result.result | safe }}
             </div>
             {% endif %}
-        </div>
-    </section>
-
-    <footer>
-        <p>Learn smarter, not harder. © 2025</p>
-    </footer>
+        </section>
+    </div>
 
     <script>
-        document.querySelector('form').addEventListener('submit', function() {
-            const prompt = document.querySelector('#prompt').value;
+        document.querySelector('form').addEventListener('submit', function(event) {
+            const prompt = document.querySelector('#prompt').value.trim();
             if (prompt === "") {
                 alert("Please enter a prompt!");
                 event.preventDefault();
             }
         });
-
     </script>
 </body>
 </html>

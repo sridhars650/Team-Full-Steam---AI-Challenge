@@ -11,3 +11,4 @@ guardrails-ai
 python-dotenv
 waitress
 setuptools 
+bs4
