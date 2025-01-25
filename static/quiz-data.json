@@ -1,0 +1,112 @@
+[
+    {
+        "question": "What is the main theme of \"Blown to Bits\"?",
+        "correct_answer": "The impact of digital technology on privacy, security, and freedom.",
+        "options": [
+            "The impact of digital technology on privacy, security, and freedom.",
+            "The history of the internet.",
+            "The development of computer hardware.",
+            "The benefits of social media."
+        ],
+        "explanation": "\"Blown to Bits\" primarily explores how digital technology affects privacy, security, and individual freedoms, highlighting both the opportunities and risks associated with the digital age."
+    },
+    {
+        "question": "In \"Blown to Bits,\" what is one of the primary concerns regarding digital data?",
+        "correct_answer": "Privacy issues due to data collection and surveillance.",
+        "options": [
+            "Privacy issues due to data collection and surveillance.",
+            "The cost of digital storage.",
+            "The speed of internet connections.",
+            "The aesthetics of digital interfaces."
+        ],
+        "explanation": "The book discusses privacy issues extensively, particularly how data collection and surveillance pose significant risks to individual privacy in the digital world."
+    },
+    {
+        "question": "How does \"Blown to Bits\" describe the influence of digital technology on personal information?",
+        "correct_answer": "It describes how personal information can be easily collected and shared without individuals' consent.",
+        "options": [
+            "It describes how personal information can be easily collected and shared without individuals' consent.",
+            "It suggests that personal information is always kept secure and private.",
+            "It claims that personal information is rarely collected online.",
+            "It states that digital technology has no impact on personal information."
+        ],
+        "explanation": "The book highlights concerns about the ease with which personal information can be collected, stored, and shared, often without individuals being aware or consenting."
+    },
+    {
+        "question": "Which concept is emphasized in \"Blown to Bits\" regarding the digital divide?",
+        "correct_answer": "The disparity in access to digital technology and information between different socioeconomic groups.",
+        "options": [
+            "The disparity in access to digital technology and information between different socioeconomic groups.",
+            "The difference in computer brands used by people.",
+            "The gap in digital technology prices.",
+            "The division of digital content into categories."
+        ],
+        "explanation": "The digital divide refers to the unequal access to technology and information, which can lead to broader societal inequalities, a key concern discussed in the book."
+    },
+    {
+        "question": "What does \"Blown to Bits\" suggest about the permanence of data on the internet?",
+        "correct_answer": "Once data is online, it is difficult to remove and can be permanent.",
+        "options": [
+            "Once data is online, it is difficult to remove and can be permanent.",
+            "Data on the internet can be easily deleted and is rarely permanent.",
+            "Data on the internet is always temporary and disappears after a short time.",
+            "Data permanence is not discussed in the book."
+        ],
+        "explanation": "The book emphasizes that once information is uploaded to the internet, it can be nearly impossible to completely erase, highlighting the lasting impact of digital footprints."
+    },
+    {
+        "question": "According to \"Blown to Bits,\" what role does encryption play in digital communications?",
+        "correct_answer": "Encryption helps protect data from unauthorized access and ensures privacy.",
+        "options": [
+            "Encryption helps protect data from unauthorized access and ensures privacy.",
+            "Encryption slows down internet speeds.",
+            "Encryption makes data accessible to everyone.",
+            "Encryption is only used in financial transactions."
+        ],
+        "explanation": "Encryption is a critical tool for securing data and communications, preventing unauthorized access, and maintaining privacy, as discussed in the book."
+    },
+    {
+        "question": "What is a significant societal impact of digital technology mentioned in \"Blown to Bits\"?",
+        "correct_answer": "The transformation of how individuals interact and communicate.",
+        "options": [
+            "The transformation of how individuals interact and communicate.",
+            "The decline of global literacy rates.",
+            "The reduction of cultural diversity.",
+            "The elimination of traditional media."
+        ],
+        "explanation": "The book discusses how digital technology has drastically changed interpersonal communication and interaction, influencing social norms and relationships."
+    },
+    {
+        "question": "How does \"Blown to Bits\" address the issue of digital data ownership?",
+        "correct_answer": "It questions who owns personal data and how it is controlled.",
+        "options": [
+            "It questions who owns personal data and how it is controlled.",
+            "It states that data is owned by the government.",
+            "It claims that data ownership is not a significant issue.",
+            "It suggests that data is always owned by the individual who creates it."
+        ],
+        "explanation": "The book explores the complexities of data ownership, including who has control over personal data and the implications for privacy and rights."
+    },
+    {
+        "question": "What does \"Blown to Bits\" say about the role of government in regulating digital spaces?",
+        "correct_answer": "Governments face challenges in regulating digital spaces due to rapid technological changes.",
+        "options": [
+            "Governments face challenges in regulating digital spaces due to rapid technological changes.",
+            "Governments have complete control over the internet.",
+            "Governments do not involve themselves in digital regulations.",
+            "Governments have successfully eliminated all digital threats."
+        ],
+        "explanation": "The book discusses the difficulties governments encounter in regulating digital spaces, largely due to the fast pace of technological advancements and the global nature of the internet."
+    },
+    {
+        "question": "In \"Blown to Bits,\" what is a suggested approach to managing digital privacy concerns?",
+        "correct_answer": "Implementing stronger privacy laws and encouraging digital literacy.",
+        "options": [
+            "Implementing stronger privacy laws and encouraging digital literacy.",
+            "Reducing internet access.",
+            "Eliminating all social media platforms.",
+            "Ignoring privacy concerns completely."
+        ],
+        "explanation": "The book suggests that strengthening privacy laws and improving digital literacy can help individuals better understand and manage their privacy in the digital age."
+    }
+]

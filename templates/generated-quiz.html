@@ -25,6 +25,7 @@
             border-radius: 12px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             text-align: center;
+            position: relative;
         }
 
         h1 {
@@ -42,6 +43,8 @@
 
         .options {
             margin-bottom: 20px;
+            position: relative;
+            overflow: hidden; /* Prevent overflow */
         }
 
         .options button {
@@ -56,7 +59,10 @@
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.3s;
+            position: relative;
+            z-index: 2;
         }
+
 
         .options button:hover {
             background-color: #007BFF;
@@ -85,6 +91,7 @@
         .options button.correct.disabled {
             background-color: #28a745 !important;
         }
+
         .feedback {
             margin-top: 20px;
             padding: 15px;
@@ -127,6 +134,28 @@
         .back-button:hover {
             background-color: #0056b3;
         }
+       
+
+        .loading-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%; /* Start with width of 0 */
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            border-radius: 6px;
+            transition: width 1.5s ease-in-out;
+        }
+
+        @keyframes loading {
+            0% {
+                width: 0%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -134,14 +163,17 @@
         <h1>Quiz Challenge</h1>
 
         <!-- Question from the AI result -->
-        <div class="question" id="question">{{ question }}</div>
+        <div class="question" id="question"> </div>
 
         <div class="options">
             <!-- Add options dynamically, based on the AI result -->
-            <button class="option" data-value="{{ answer }}">{{ answer }}</button>
-            <button class="option" data-value="Other Answer">Other Answer</button>
-            <button class="option" data-value="Another Answer">Another Answer</button>
-            <button class="option" data-value="Yet Another Answer">Yet Another Answer</button>
+            <button class="option" data-value="{{ correct_answer }}"> </button>
+            <button class="option" data-value="Other Answer"> </button>
+            <button class="option" data-value="Another Answer"> </button>
+            <button class="option" data-value="Yet Another Answer"> </button>
+
+            <!-- Loading bar -->
+            <div id="loadingBar" class="loading-bar" style="display: none;"></div>
         </div>
 
         <div id="feedback" class="feedback" style="display: none;"></div>
@@ -151,53 +183,84 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const questionElement = document.getElementById('question');
-            const feedback = document.getElementById('feedback');
-            const options = document.querySelectorAll('.option');
-            let selectedAnswer = null;
+        const questionElement = document.getElementById('question');
+        const feedback = document.getElementById('feedback');
+        const options = document.querySelectorAll('.option');
+        const loadingBar = document.getElementById('loadingBar');
+        let selectedAnswer = null;
 
-            // Sample AI result
-            const aiResult = {
-                question: "What is the capital of France?",
-                correct_answer: "Paris",
-                explanation: "The capital of France is Paris, which is known for its culture, history, and landmarks like the Eiffel Tower."
-            };
+        // Function to simulate loading (sets width)
+        function showLoadingBar() {
+            loadingBar.style.width = '100%'; // Start filling the bar
+        }
 
-            // Load AI question
-            questionElement.textContent = aiResult.question;
+        // Show loading bar while waiting for the data
+        loadingBar.style.display = 'block';
 
-            // Handle option selection
-            options.forEach(option => {
-                option.addEventListener('click', () => {
-                    // If an answer is already selected, remove the color classes
-                    if (selectedAnswer) {
-                        selectedAnswer.classList.remove('correct', 'incorrect');
-                    }
-                    selectedAnswer = option;
-                    selectedAnswer.classList.add('selected');
+        // Trigger the loading bar animation
 
-                    // Disable all options after selection
-                    options.forEach(opt => opt.classList.add('disabled'));
+        // Fetch the JSON file containing the data
+        fetch('/static/quiz-data.json')
+            .then(response => response.json())
+            .then(aiResults => {
+                // Hide loading bar after content is fetched
+                setTimeout(() => {
+                    loadingBar.style.display = 'none';
+                }, 1500);  // Wait for the loading bar animation to complete
 
-                    const userResponse = selectedAnswer.getAttribute('data-value').trim();
+                // Access the first object in the array
+                const aiResult = aiResults[0];
 
-                    // Check answer and apply feedback
-                    if (userResponse.toLowerCase() === aiResult.correct_answer.toLowerCase()) {
-                        selectedAnswer.classList.add('correct');
-                        feedback.className = 'feedback correct';
-                        feedback.innerHTML = `<p>Correct! 🎉</p><div class="explanation">${aiResult.explanation}</div>`;
-                    } else {
-                        selectedAnswer.classList.add('incorrect');
-                        selectedAnswer.classList.add('disabled');
-                        feedback.className = 'feedback incorrect';
-                        feedback.innerHTML = `<p>Incorrect. ❌</p><div class="explanation">${aiResult.explanation}</div>`;
-                    }
+                // Load question from JSON
+                questionElement.textContent = aiResult.question;
 
-                    // Display feedback
-                    feedback.style.display = 'block';
+                // Populate options dynamically from JSON
+                options.forEach((option, index) => {
+                    option.textContent = aiResult.options[index];
+                    option.setAttribute('data-value', aiResult.options[index]);
                 });
+
+                // Handle option selection
+                options.forEach(option => {
+                    option.addEventListener('click', () => {
+                        // If an answer is already selected, remove the color classes
+                        if (selectedAnswer) {
+                            selectedAnswer.classList.remove('correct', 'incorrect');
+                        }
+                        selectedAnswer = option;
+                        selectedAnswer.classList.add('selected');
+
+                        // Disable all options after selection
+                        options.forEach(opt => {
+                            opt.classList.add('disabled'); // Make sure this line is functioning
+                        });
+
+                        const userResponse = selectedAnswer.getAttribute('data-value').trim();
+
+                        // Check answer and apply feedback
+                        if (userResponse.toLowerCase() === aiResult.correct_answer.toLowerCase()) {
+                            selectedAnswer.classList.add('correct');
+                            feedback.className = 'feedback correct';
+                            feedback.innerHTML = `<p>Correct! 🎉</p><div class="explanation">${aiResult.explanation}</div>`;
+                        } else {
+                            selectedAnswer.classList.add('incorrect');
+                            selectedAnswer.classList.add('disabled');
+                            feedback.className = 'feedback incorrect';
+                            feedback.innerHTML = `<p>Incorrect. ❌</p><div class="explanation">${aiResult.explanation}</div>`;
+                        }
+
+                        // Display feedback
+                        feedback.style.display = 'block';
+                    });
+                });
+
+            })
+            .catch(error => {
+                console.error('Error fetching JSON:', error);
+                loadingBar.style.display = 'none';  // Hide loading bar in case of error
             });
-        });
+    });
+
     </script>
 </body>
 </html>

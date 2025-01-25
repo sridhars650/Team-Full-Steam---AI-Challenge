@@ -183,67 +183,70 @@ class BaseQAPipeline:
       
 #Setup GenerateStudyPlan pipeline
 class GenerateStudyPlan:
-    # Load data from PDF
-    file_path = "tutor_textbook.pdf"
 
-    loader = PyPDFLoader(file_path)
-    data = loader.load()
+    def invoke(self, input_dict):
+        # Load data from PDF
+        file_path = "tutor_textbook.pdf"
 
-    # Combine text from Document into one string for question generation
-    text_question_gen = ''
-    for page in data:
-        text_question_gen += page.page_content
+        loader = PyPDFLoader(file_path)
+        data = loader.load()
 
-    # Initialize Text Splitter for question generation
-    text_splitter_question_gen = TokenTextSplitter(model_name="gpt-3.5-turbo", chunk_size=10000, chunk_overlap=200)
+        # Combine text from Document into one string for question generation
+        text_question_gen = ''
+        for page in data:
+            text_question_gen += page.page_content
 
-    # Split text into chunks for question generation
-    text_chunks_question_gen = text_splitter_question_gen.split_text(text_question_gen)
+        # Initialize Text Splitter for question generation
+        text_splitter_question_gen = TokenTextSplitter(model_name="gpt-3.5-turbo", chunk_size=10000, chunk_overlap=200)
 
-    # Convert chunks into Documents for question generation
-    docs_question_gen = [Document(page_content=t) for t in text_chunks_question_gen]
+        # Split text into chunks for question generation
+        text_chunks_question_gen = text_splitter_question_gen.split_text(text_question_gen)
 
-    # Initialize Text Splitter for answer generation
-    text_splitter_answer_gen = TokenTextSplitter(model_name="gpt-3.5-turbo", chunk_size=1000, chunk_overlap=100)
+        # Convert chunks into Documents for question generation
+        docs_question_gen = [Document(page_content=t) for t in text_chunks_question_gen]
 
-    # Split documents into chunks for answer generation
-    docs_answer_gen = text_splitter_answer_gen.split_documents(docs_question_gen)
+        # Initialize Text Splitter for answer generation
+        text_splitter_answer_gen = TokenTextSplitter(model_name="gpt-3.5-turbo", chunk_size=1000, chunk_overlap=100)
 
-    # Initialize Large Language Model for question generation
-    llm_question_gen = ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"),temperature=0.4, model="gpt-3.5-turbo")
+        # Split documents into chunks for answer generation
+        docs_answer_gen = text_splitter_answer_gen.split_documents(docs_question_gen)
 
-    # Initialize question generation chain
-    question_gen_chain = load_summarize_chain(llm = llm_question_gen, chain_type = "refine", verbose = True, question_prompt=PROMPT_QUESTIONS, refine_prompt=REFINE_PROMPT_QUESTIONS)
+        # Initialize Large Language Model for question generation
+        llm_question_gen = ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"),temperature=0.4, model="gpt-3.5-turbo")
 
-    # Run question generation chain
-    questions = question_gen_chain.run(docs_question_gen)
+        # Initialize question generation chain
+        question_gen_chain = load_summarize_chain(llm = llm_question_gen, chain_type = "refine", verbose = True, question_prompt=PROMPT_QUESTIONS, refine_prompt=REFINE_PROMPT_QUESTIONS)
 
-    # Initialize Large Language Model for answer generation
-    llm_answer_gen = ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"),temperature=0.1, model="gpt-3.5-turbo")
+        # Run question generation chain
+        questions = question_gen_chain.run(docs_question_gen)
 
-    # Create vector database for answer generation
-    embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
+        # Initialize Large Language Model for answer generation
+        llm_answer_gen = ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"),temperature=0.1, model="gpt-3.5-turbo")
 
-    # Initialize vector store for answer generation
-    vector_store = Chroma.from_documents(docs_answer_gen, embeddings)
+        # Create vector database for answer generation
+        embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
 
-    # Initialize retrieval chain for answer generation
-    answer_gen_chain = RetrievalQA.from_chain_type(llm=llm_answer_gen, chain_type="stuff", retriever=vector_store.as_retriever(k=2))
+        # Initialize vector store for answer generation
+        vector_store = Chroma.from_documents(docs_answer_gen, embeddings)
 
-    # Split generated questions into a list of questions
-    question_list = questions.split("\\n")
+        # Initialize retrieval chain for answer generation
+        answer_gen_chain = RetrievalQA.from_chain_type(llm=llm_answer_gen, chain_type="stuff", retriever=vector_store.as_retriever(k=2))
 
-    # Answer each question and save to a file
-    for question in question_list:
-        # print("Question: ", question)
-        # answer = answer_gen_chain.run(question)
-        # print("Answer: ", answer)
-        # print("--------------------------------------------------\\n\\n")
-        # Save answer to file
-        with open("answers.txt", "a") as f:
-            f.write("Question: " + question + "\\n")
-            f.write("Answer: " + answer + "\\n")
-            f.write("--------------------------------------------------\\n\\n")
+        # Split generated questions into a list of questions
+        question_list = questions.split("\\n")
+
+        # Answer each question and save to a file
+        for question in question_list:
+            # print("Question: ", question)
+            answer = answer_gen_chain.run(question)
+            # print("Answer: ", answer)
+            # print("--------------------------------------------------\\n\\n")
+            # Save answer to file
+            with open("answers.txt", "a") as f:
+                f.write("Question: " + question + "\\n")
+                f.write("Answer: " + answer + "\\n")
+                f.write("--------------------------------------------------\\n\\n")
+    
 
 #Setup Summarizer pipeline
 class Summarizer:
@@ -374,7 +377,7 @@ class QuizAI:
                                  persist_directory=".")
 
         # Initialize a language model with ChatOpenAI
-        self.llm = ChatOpenAI(model_name= 'gpt-3.5-turbo', temperature=0.6)
+        self.llm = ChatOpenAI(model_name= 'gpt-4o', temperature=0.6)
 
         #Setup a prompt template
         template = """\
@@ -389,7 +392,10 @@ class QuizAI:
         *** 
         Query: (THE USER'S QUERY GOES HERE)
         Quiz Question: (YOUR GENERATED QUIZ QUESTION GOES HERE)
-        Quiz Answer: (YOUR GENERATED QUIZ ANSWER GOES HERE)
+        Quiz Correct Answer: (YOUR GENERATED QUIZ ANSWER GOES HERE)
+        Quiz Incorrect Answer: (YOUR GENERATED QUIZ ANSWER GOES HERE)
+        Quiz Another Incorrect Answer: (YOUR GENERATED QUIZ ANSWER GOES HERE)
+        Quiz Final Tricky Incorrect Answer: (YOUR GENERATED QUIZ ANSWER GOES HERE)
         Quiz Answer Explanation: (YOUR GENERATED EXPLANATION GOES HERE)
         ***
 
@@ -470,6 +476,7 @@ class QuizAI:
 from flask import Flask, render_template, request, redirect, url_for
 import markdown
 from bs4 import BeautifulSoup
+import json
 
 filepath = "./tutor_textbook.pdf"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx', 'png', 'jpg', 'jpeg', 'gif'}
@@ -566,36 +573,59 @@ def quiz_maker():
         print(prompt_data)
         result = quiz.invoke({'question' : prompt_data})
         QUIZGENERATED = True
-        try:
-            result['result'] = markdown.markdown(result['result'])
-        except Exception:
-            result = {"result": "An error occurred while processing the quiz data."}
-    
+        print(result)
+
         # Parse the result HTML to extract the question, answer, and explanation
         soup = BeautifulSoup(result['result'], 'html.parser')
+        
+        # Extracting relevant parts
+        result_text = result['result']
+        quizzes = result_text.split("***")
+        parsed_quizzes = []
 
-        # Extract the relevant parts
-        try:
-            # Ensure we have enough <p> elements
-            paragraphs = soup.find_all('p')
-            if len(paragraphs) >= 4:
-                question = paragraphs[1].text.split(':')[1].strip()
-                answer = paragraphs[2].text.split(':')[1].strip()
-                explanation = paragraphs[3].text.split(':')[1].strip()
-            else:
-                raise ValueError("Insufficient <p> tags in the result HTML.")
-        except Exception as e:
-            # Handle the case where there are not enough <p> tags or the content is malformed
-            return f"Error parsing the quiz result: {str(e)}", 500
 
-        # Pass the parsed data to the template
-        return render_template('generated-quiz.html', question=question, answer=answer, explanation=explanation)
+        for quiz in quizzes:
+            lines = [line.strip() for line in quiz.split("\n") if line.strip()]
+            if len(lines) < 7:
+                continue  # Skip invalid or incomplete entries
+            try:
+                # Extracting quiz data
+                question = lines[1].split(": ", 1)[1]
+                correct_answer = lines[2].split(": ", 1)[1]
+                incorrect_answers = [
+                    lines[3].split(": ", 1)[1],
+                    lines[4].split(": ", 1)[1],
+                    lines[5].split(": ", 1)[1],
+                ]
+                explanation = lines[6].split(": ", 1)[1]
+
+                # Add parsed quiz to the list
+                parsed_quizzes.append({
+                    "question": question,
+                    "correct_answer": correct_answer,
+                    "options": [correct_answer] + incorrect_answers,
+                    "explanation": explanation
+                })
+            except Exception as e:
+                print(f"Error parsing quiz: {quiz}\nError: {e}")
+
+
+            # Write to a JSON file
+            quiz_filepath = "/static/quiz-data.json"
+            with open(quiz_filepath, "w") as quiz_file:
+                json.dump(parsed_quizzes, quiz_file, indent=4)
+
+            print("Quiz data successfully parsed and saved to 'quiz-data.json'!")
+
+        # Render the template with the file path passed as a parameter
+        return render_template('generated-quiz.html', quiz_file=quiz_filepath)
 
     return render_template("quiz.html")
 
 @app.route('/generated-quiz', methods=['GET'])
 def generated_quiz():
     global QUIZGENERATED
+    QUIZGENERATED = True
     if QUIZGENERATED:
         # The AI result data you provided
         ai_result = {
