@@ -8,8 +8,7 @@ def install_packages():
     except subprocess.CalledProcessError as e:
         print(f"Error occurred while installing packages: {e}")
         sys.exit(1)
-    subprocess.check_call(["pip", "uninstall", "setuptools", "-y"])
-    subprocess.check_call(["pip", "install", "setuptools"])
+    
 
 def install_guardrail_pkgs(package):
     try:
