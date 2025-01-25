@@ -159,7 +159,7 @@ class BaseQAPipeline:
         question = input_dict.get("question")
         
         if (self.guardrails(question) == False):
-          print("It has failed (this is only a message to debug)\n")
+          print("The user entered in a bad question (this is only a message to debug)\n")
           return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
         combined_context = self.build_combined_context()
 
@@ -169,6 +169,10 @@ class BaseQAPipeline:
         })
 
         self.update_chat_history(question, result['result'])
+
+        if (self.guardrails(result['result']) == False):
+            print("the LLM has generated a bad resposne (this is a message to debug)")
+            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
         return result
 
     def guardrails(self, input):
@@ -339,10 +343,10 @@ class Summarizer:
     def invoke(self, input_dict):
         question = input_dict.get("question")
         
-        # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
-        # if (self.guardrails(question) == False):
-        #   print("It has failed (this is only a message to debug)\n")
-        #   return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        if (self.guardrails(question) == False):
+          print("It has failed (this is only a message to debug)\n")
+          return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        
         combined_context = self.build_combined_context()
 
         result = self.qa_chain.invoke({
@@ -351,6 +355,11 @@ class Summarizer:
         })
 
         self.update_chat_history(question, result['result'])
+
+        if (self.guardrails(result['result']) == False):
+            print("the LLM has generated a bad resposne (this is a message to debug)")
+            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+
         return result
 
     def guardrails(self, input):
@@ -450,9 +459,10 @@ class QuizAI:
         question = input_dict.get("question")
         
         # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
-        # if (self.guardrails(question) == False):
-        #   print("It has failed (this is only a message to debug)\n")
-        #   return {'query': 'What is an EDR?', 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        if (self.guardrails(question) == False):
+          print("It has failed (this is only a message to debug)\n")
+          return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        
         combined_context = self.build_combined_context()
 
         result = self.qa_chain.invoke({
@@ -461,6 +471,11 @@ class QuizAI:
         })
 
         self.update_chat_history(question, result['result'])
+
+        if (self.guardrails(result['result']) == False):
+            print("the LLM has generated a bad resposne (this is a message to debug)")
+            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+
         return result
 
     def guardrails(self, input):
