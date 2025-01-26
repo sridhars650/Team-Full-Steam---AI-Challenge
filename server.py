@@ -598,7 +598,7 @@ def quiz_maker():
         result_text = result['result']
         quizzes = result_text.split("***")
         parsed_quizzes = []
-
+        quiz_filepath = "static/quiz-data.json"
 
         for quiz in quizzes:
             lines = [line.strip() for line in quiz.split("\n") if line.strip()]
@@ -627,7 +627,6 @@ def quiz_maker():
 
 
             # Write to a JSON file
-            quiz_filepath = "/static/quiz-data.json"
             with open(quiz_filepath, "w") as quiz_file:
                 json.dump(parsed_quizzes, quiz_file, indent=4)
 

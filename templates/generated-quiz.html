@@ -156,7 +156,53 @@
                 width: 100%;
             }
         }
+        #nextButton {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        #nextButton:hover {
+            background-color: #218838;
+        }
+
+        #nextButton.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #backButton {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #17a2b8;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        #backButton:hover {
+            background-color: #117a8b;
+        }
+
+        #backButton.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
     </style>
+
 </head>
 <body>
     <div class="container">
@@ -177,6 +223,8 @@
         </div>
 
         <div id="feedback" class="feedback" style="display: none;"></div>
+        <a href="#" id="nextButton" class="back-button">Next</a>
+        <a href="#" id="backButton" class="back-button disabled">Back</a>
 
         <a href="/" class="back-button">Back to Home</a>
     </div>
@@ -187,7 +235,11 @@
         const feedback = document.getElementById('feedback');
         const options = document.querySelectorAll('.option');
         const loadingBar = document.getElementById('loadingBar');
+        const nextButton = document.getElementById('nextButton');
+        const backButton = document.getElementById('backButton');
         let selectedAnswer = null;
+        let currentQuestionIndex = 0;
+        let aiResults = [];
 
         // Function to simulate loading (sets width)
         function showLoadingBar() {
@@ -197,68 +249,145 @@
         // Show loading bar while waiting for the data
         loadingBar.style.display = 'block';
 
-        // Trigger the loading bar animation
-
         // Fetch the JSON file containing the data
         fetch('/static/quiz-data.json')
             .then(response => response.json())
-            .then(aiResults => {
+            .then(data => {
                 // Hide loading bar after content is fetched
                 setTimeout(() => {
                     loadingBar.style.display = 'none';
                 }, 1500);  // Wait for the loading bar animation to complete
 
-                // Access the first object in the array
-                const aiResult = aiResults[0];
+                // Store the quiz data
+                aiResults = data;
 
-                // Load question from JSON
-                questionElement.textContent = aiResult.question;
-
-                // Populate options dynamically from JSON
-                options.forEach((option, index) => {
-                    option.textContent = aiResult.options[index];
-                    option.setAttribute('data-value', aiResult.options[index]);
-                });
-
-                // Handle option selection
-                options.forEach(option => {
-                    option.addEventListener('click', () => {
-                        // If an answer is already selected, remove the color classes
-                        if (selectedAnswer) {
-                            selectedAnswer.classList.remove('correct', 'incorrect');
-                        }
-                        selectedAnswer = option;
-                        selectedAnswer.classList.add('selected');
-
-                        // Disable all options after selection
-                        options.forEach(opt => {
-                            opt.classList.add('disabled'); // Make sure this line is functioning
-                        });
-
-                        const userResponse = selectedAnswer.getAttribute('data-value').trim();
-
-                        // Check answer and apply feedback
-                        if (userResponse.toLowerCase() === aiResult.correct_answer.toLowerCase()) {
-                            selectedAnswer.classList.add('correct');
-                            feedback.className = 'feedback correct';
-                            feedback.innerHTML = `<p>Correct! 🎉</p><div class="explanation">${aiResult.explanation}</div>`;
-                        } else {
-                            selectedAnswer.classList.add('incorrect');
-                            selectedAnswer.classList.add('disabled');
-                            feedback.className = 'feedback incorrect';
-                            feedback.innerHTML = `<p>Incorrect. ❌</p><div class="explanation">${aiResult.explanation}</div>`;
-                        }
-
-                        // Display feedback
-                        feedback.style.display = 'block';
-                    });
-                });
-
+                // Load the first question
+                loadQuestion();
             })
             .catch(error => {
                 console.error('Error fetching JSON:', error);
                 loadingBar.style.display = 'none';  // Hide loading bar in case of error
             });
+
+        // Function to load a question
+        function loadQuestion() {
+            const aiResult = aiResults[currentQuestionIndex];
+
+            // Load question from JSON
+            questionElement.textContent = aiResult.question;
+
+            // Populate options dynamically from JSON
+            options.forEach((option, index) => {
+                option.textContent = aiResult.options[index];
+                option.setAttribute('data-value', aiResult.options[index]);
+            });
+
+            // Reset feedback and selected answer
+            feedback.style.display = 'none';
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+            });
+            selectedAnswer = null;
+
+            // Try to load stored answer from localStorage
+            const storedAnswer = localStorage.getItem(`question-${currentQuestionIndex}-answer`);
+            if (storedAnswer) {
+                options.forEach(option => {
+                    if (option.getAttribute('data-value') === storedAnswer) {
+                        option.classList.add('selected');
+                        selectedAnswer = option;
+                        option.classList.add('disabled');
+                        if (storedAnswer.toLowerCase() === aiResult.correct_answer.toLowerCase()) {
+                            option.classList.add('correct');
+                            feedback.className = 'feedback correct';
+                            feedback.innerHTML = `<p>Correct! 🎉</p><div class="explanation">${aiResult.explanation}</div>`;
+                            // Enable the "Next" button for correct answer
+                            nextButton.classList.remove('disabled');
+                        } else {
+                            option.classList.add('incorrect');
+                            feedback.className = 'feedback incorrect';
+                            feedback.innerHTML = `<p>Incorrect. ❌</p><div class="explanation">${aiResult.explanation}</div>`;
+                        }
+                        feedback.style.display = 'block';
+                    }
+                });
+            } else {
+                // If there's no stored answer, make sure "Next" is disabled
+                nextButton.classList.add('disabled');
+            }
+
+            // Handle option selection
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    // If an answer is already selected, remove the color classes
+                    if (selectedAnswer) {
+                        selectedAnswer.classList.remove('correct', 'incorrect');
+                    }
+                    selectedAnswer = option;
+                    selectedAnswer.classList.add('selected');
+
+                    // Disable all options after selection
+                    options.forEach(opt => {
+                        opt.classList.add('disabled');
+                    });
+
+                    const userResponse = selectedAnswer.getAttribute('data-value').trim();
+
+                    // Check answer and apply feedback
+                    if (userResponse.toLowerCase() === aiResult.correct_answer.toLowerCase()) {
+                        selectedAnswer.classList.add('correct');
+                        feedback.className = 'feedback correct';
+                        feedback.innerHTML = `<p>Correct! 🎉</p><div class="explanation">${aiResult.explanation}</div>`;
+
+                        // Enable the "Next" button after correct answer
+                        nextButton.classList.remove('disabled');
+                    } else {
+                        selectedAnswer.classList.add('incorrect');
+                        feedback.className = 'feedback incorrect';
+                        feedback.innerHTML = `<p>Incorrect. ❌</p><div class="explanation">${aiResult.explanation}</div>`;
+                    }
+
+                    // Display feedback
+                    feedback.style.display = 'block';
+
+                    // Save selected answer in localStorage
+                    localStorage.setItem(`question-${currentQuestionIndex}-answer`, userResponse);
+                });
+            });
+
+            // Enable or disable the "Back" button based on the question index
+            if (currentQuestionIndex > 0) {
+                backButton.classList.remove('disabled');
+            } else {
+                backButton.classList.add('disabled');
+            }
+        }
+
+        // Handle "Next" button click
+        nextButton.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // If the "Next" button is not disabled, go to the next question
+            if (!nextButton.classList.contains('disabled')) {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < aiResults.length) {
+                    loadQuestion();
+                }
+            }
+        });
+
+        // Handle "Back" button click
+        backButton.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // If the "Back" button is not disabled, go to the previous question
+            if (!backButton.classList.contains('disabled')) {
+                currentQuestionIndex--;
+                if (currentQuestionIndex >= 0) {
+                    loadQuestion();
+                }
+            }
+        });
     });
 
     </script>
