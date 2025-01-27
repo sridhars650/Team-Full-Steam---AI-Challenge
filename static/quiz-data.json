@@ -1,112 +1,112 @@
 [
     {
-        "question": "What is the main theme of \"Blown to Bits\"?",
-        "correct_answer": "The impact of digital technology on privacy, security, and freedom.",
+        "question": "What is a key concern Nicolette faces after her job interview was conducted by a computer program?",
+        "correct_answer": "She is frustrated with not knowing the basis for the decision against her.",
         "options": [
-            "The impact of digital technology on privacy, security, and freedom.",
-            "The history of the internet.",
-            "The development of computer hardware.",
-            "The benefits of social media."
+            "She is frustrated with not knowing the basis for the decision against her.",
+            "She is happy with the transparency of the decision-making process.",
+            "She is relieved that the decision was made quickly, regardless of the outcome.",
+            "She is indifferent to the decision and the process."
         ],
-        "explanation": "\"Blown to Bits\" primarily explores how digital technology affects privacy, security, and individual freedoms, highlighting both the opportunities and risks associated with the digital age."
+        "explanation": "Nicolette's frustration stems from the lack of transparency in the decision-making process, which is a common concern regarding the use of artificial intelligence in such contexts."
     },
     {
-        "question": "In \"Blown to Bits,\" what is one of the primary concerns regarding digital data?",
-        "correct_answer": "Privacy issues due to data collection and surveillance.",
+        "question": "Who proposed the \"Laws of Robotics\" in 1950?",
+        "correct_answer": "Isaac Asimov",
         "options": [
-            "Privacy issues due to data collection and surveillance.",
-            "The cost of digital storage.",
-            "The speed of internet connections.",
-            "The aesthetics of digital interfaces."
+            "Isaac Asimov",
+            "Alan Turing",
+            "Stephen Hawking",
+            "Nikola Tesla"
         ],
-        "explanation": "The book discusses privacy issues extensively, particularly how data collection and surveillance pose significant risks to individual privacy in the digital world."
+        "explanation": "Isaac Asimov, a science fiction writer, proposed the \"Laws of Robotics\" in 1950 as abstract principles to guide the performance of intelligent devices."
     },
     {
-        "question": "How does \"Blown to Bits\" describe the influence of digital technology on personal information?",
-        "correct_answer": "It describes how personal information can be easily collected and shared without individuals' consent.",
+        "question": "What is the First Law of Robotics according to Isaac Asimov?",
+        "correct_answer": "A robot may not injure a human being or, through inaction, allow a human being to come to harm.",
         "options": [
-            "It describes how personal information can be easily collected and shared without individuals' consent.",
-            "It suggests that personal information is always kept secure and private.",
-            "It claims that personal information is rarely collected online.",
-            "It states that digital technology has no impact on personal information."
+            "A robot may not injure a human being or, through inaction, allow a human being to come to harm.",
+            "A robot must always follow human commands without question.",
+            "A robot must prioritize its own existence above all else.",
+            "A robot should never interact with humans."
         ],
-        "explanation": "The book highlights concerns about the ease with which personal information can be collected, stored, and shared, often without individuals being aware or consenting."
+        "explanation": "The First Law emphasizes the safety and protection of humans, prohibiting robots from causing harm either directly or indirectly."
     },
     {
-        "question": "Which concept is emphasized in \"Blown to Bits\" regarding the digital divide?",
-        "correct_answer": "The disparity in access to digital technology and information between different socioeconomic groups.",
+        "question": "According to Asimov, what must a robot do according to the Second Law of Robotics?",
+        "correct_answer": "A robot must obey the orders given it by human beings except where such orders would conflict with the First Law.",
         "options": [
-            "The disparity in access to digital technology and information between different socioeconomic groups.",
-            "The difference in computer brands used by people.",
-            "The gap in digital technology prices.",
-            "The division of digital content into categories."
+            "A robot must obey the orders given it by human beings except where such orders would conflict with the First Law.",
+            "A robot must always operate independently of human orders.",
+            "A robot must prioritize its own programming over human commands.",
+            "A robot should only follow orders if it benefits its own existence."
         ],
-        "explanation": "The digital divide refers to the unequal access to technology and information, which can lead to broader societal inequalities, a key concern discussed in the book."
+        "explanation": "The Second Law requires robots to follow human orders unless doing so would cause harm to humans, as stated in the First Law."
     },
     {
-        "question": "What does \"Blown to Bits\" suggest about the permanence of data on the internet?",
-        "correct_answer": "Once data is online, it is difficult to remove and can be permanent.",
+        "question": "What is the Third Law of Robotics as described by Isaac Asimov?",
+        "correct_answer": "A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.",
         "options": [
-            "Once data is online, it is difficult to remove and can be permanent.",
-            "Data on the internet can be easily deleted and is rarely permanent.",
-            "Data on the internet is always temporary and disappears after a short time.",
-            "Data permanence is not discussed in the book."
+            "A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.",
+            "A robot should prioritize its own safety above all human interactions.",
+            "A robot must never protect its own existence under any circumstances.",
+            "A robot should protect its existence even if it conflicts with human safety."
         ],
-        "explanation": "The book emphasizes that once information is uploaded to the internet, it can be nearly impossible to completely erase, highlighting the lasting impact of digital footprints."
+        "explanation": "The Third Law allows for self-preservation but only if it does not conflict with the safety of humans or obedience to human orders as described in the First and Second Laws."
     },
     {
-        "question": "According to \"Blown to Bits,\" what role does encryption play in digital communications?",
-        "correct_answer": "Encryption helps protect data from unauthorized access and ensures privacy.",
+        "question": "How do Asimov's Laws of Robotics interact in fictional narratives?",
+        "correct_answer": "They interact in surprising ways, especially in the hands of an expert writer of fiction.",
         "options": [
-            "Encryption helps protect data from unauthorized access and ensures privacy.",
-            "Encryption slows down internet speeds.",
-            "Encryption makes data accessible to everyone.",
-            "Encryption is only used in financial transactions."
+            "They interact in surprising ways, especially in the hands of an expert writer of fiction.",
+            "They always create predictable and straightforward scenarios.",
+            "They do not interact and are used independently.",
+            "They primarily create conflict between robots and humans."
         ],
-        "explanation": "Encryption is a critical tool for securing data and communications, preventing unauthorized access, and maintaining privacy, as discussed in the book."
+        "explanation": "Asimov's Laws often create complex and unexpected situations in stories, demonstrating the nuanced challenges of programming ethics in artificial intelligence."
     },
     {
-        "question": "What is a significant societal impact of digital technology mentioned in \"Blown to Bits\"?",
-        "correct_answer": "The transformation of how individuals interact and communicate.",
+        "question": "Why is the world moving from imagining to experiencing what happens with AI?",
+        "correct_answer": "Because AI is increasingly being integrated into real-world applications, impacting everyday life.",
         "options": [
-            "The transformation of how individuals interact and communicate.",
-            "The decline of global literacy rates.",
-            "The reduction of cultural diversity.",
-            "The elimination of traditional media."
+            "Because AI is increasingly being integrated into real-world applications, impacting everyday life.",
+            "Because the world is losing interest in science fiction.",
+            "Because AI is no longer relevant in modern technology discussions.",
+            "Because AI has solved all ethical dilemmas."
         ],
-        "explanation": "The book discusses how digital technology has drastically changed interpersonal communication and interaction, influencing social norms and relationships."
+        "explanation": "The transition reflects the growing presence of AI in practical scenarios, raising real-world implications and ethical concerns."
     },
     {
-        "question": "How does \"Blown to Bits\" address the issue of digital data ownership?",
-        "correct_answer": "It questions who owns personal data and how it is controlled.",
+        "question": "What is a canonical manifestation of misgivings about AI according to Chapter 1?",
+        "correct_answer": "The frustration of individuals like Nicolette who do not understand the basis for AI decisions.",
         "options": [
-            "It questions who owns personal data and how it is controlled.",
-            "It states that data is owned by the government.",
-            "It claims that data ownership is not a significant issue.",
-            "It suggests that data is always owned by the individual who creates it."
+            "The frustration of individuals like Nicolette who do not understand the basis for AI decisions.",
+            "The seamless integration of AI into everyday life without any issues.",
+            "The overwhelming success of AI in all fields.",
+            "The complete elimination of human jobs by AI."
         ],
-        "explanation": "The book explores the complexities of data ownership, including who has control over personal data and the implications for privacy and rights."
+        "explanation": "Nicolette's experience highlights a common concern about AI's lack of transparency and accountability in decision-making processes."
     },
     {
-        "question": "What does \"Blown to Bits\" say about the role of government in regulating digital spaces?",
-        "correct_answer": "Governments face challenges in regulating digital spaces due to rapid technological changes.",
+        "question": "What year did Isaac Asimov propose the Laws of Robotics?",
+        "correct_answer": "1950",
         "options": [
-            "Governments face challenges in regulating digital spaces due to rapid technological changes.",
-            "Governments have complete control over the internet.",
-            "Governments do not involve themselves in digital regulations.",
-            "Governments have successfully eliminated all digital threats."
+            "1950",
+            "1940",
+            "1960",
+            "1980"
         ],
-        "explanation": "The book discusses the difficulties governments encounter in regulating digital spaces, largely due to the fast pace of technological advancements and the global nature of the internet."
+        "explanation": "Isaac Asimov introduced the Laws of Robotics in 1950, setting foundational ethical guidelines for fictional AI."
     },
     {
-        "question": "In \"Blown to Bits,\" what is a suggested approach to managing digital privacy concerns?",
-        "correct_answer": "Implementing stronger privacy laws and encouraging digital literacy.",
+        "question": "Why might the simple rules of the Laws of Robotics be considered complex in practice?",
+        "correct_answer": "They can interact in surprising ways, leading to complex ethical and practical scenarios.",
         "options": [
-            "Implementing stronger privacy laws and encouraging digital literacy.",
-            "Reducing internet access.",
-            "Eliminating all social media platforms.",
-            "Ignoring privacy concerns completely."
+            "They can interact in surprising ways, leading to complex ethical and practical scenarios.",
+            "They are too simple to apply to any real-world situation.",
+            "They do not cover enough situations to be useful.",
+            "They prevent robots from functioning effectively."
         ],
-        "explanation": "The book suggests that strengthening privacy laws and improving digital literacy can help individuals better understand and manage their privacy in the digital age."
+        "explanation": "The interaction of these laws can create intricate dilemmas and scenarios, particularly in fictional narratives that explore AI's implications."
     }
 ]

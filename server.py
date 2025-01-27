@@ -53,7 +53,7 @@ guard = Guard().use_many(
     ),
 
     LogicCheck(
-        model="gpt-3.5-turbo",
+        model="gpt-4o",
         on_fail="fix"
     ),
 
@@ -62,7 +62,7 @@ guard = Guard().use_many(
     ),
 
     PolitenessCheck(
-        llm_callable="gpt-3.5-turbo",
+        llm_callable="gpt-4o",
         on_fail = "fix"
     ),
 
@@ -90,7 +90,7 @@ class BaseQAPipeline:
                                  persist_directory=".")
 
         # Initialize a language model with ChatOpenAI
-        self.llm = ChatOpenAI(model_name= 'gpt-3.5-turbo', temperature=0.6)
+        self.llm = ChatOpenAI(model_name= 'gpt-4o', temperature=0.6)
 
         #Setup a prompt template
         template = """\
@@ -460,9 +460,9 @@ class QuizAI:
         question = input_dict.get("question")
         
         # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
-        if (self.guardrails(question) == False):
-          print("It has failed (this is only a message to debug)\n")
-          return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        # if (self.guardrails(question) == False):
+        #   print("It has failed (this is only a message to debug)\n")
+        #   return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
         
         combined_context = self.build_combined_context()
 
@@ -473,9 +473,10 @@ class QuizAI:
 
         self.update_chat_history(question, result['result'])
 
-        if (self.guardrails(result['result']) == False):
-            print("the LLM has generated a bad resposne (this is a message to debug)")
-            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
+        # if (self.guardrails(result['result']) == False):
+        #     print("the LLM has generated a bad resposne (this is a message to debug)")
+        #     return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
 
         return result
 

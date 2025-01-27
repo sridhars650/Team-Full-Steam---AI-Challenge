@@ -269,17 +269,34 @@
                 loadingBar.style.display = 'none';  // Hide loading bar in case of error
             });
 
-        // Function to load a question
+       // Function to shuffle an array (Fisher-Yates Shuffle)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
+
         function loadQuestion() {
             const aiResult = aiResults[currentQuestionIndex];
 
             // Load question from JSON
             questionElement.textContent = aiResult.question;
 
-            // Populate options dynamically from JSON
+            // Create an array of options and shuffle them
+            const optionsArray = aiResult.options.map(option => ({
+                text: option,
+                isCorrect: option === aiResult.correct_answer
+            }));
+
+            // Shuffle the options array to randomize
+            shuffleArray(optionsArray);
+
+            // Populate options dynamically from shuffled options array
             options.forEach((option, index) => {
-                option.textContent = aiResult.options[index];
-                option.setAttribute('data-value', aiResult.options[index]);
+                option.textContent = optionsArray[index].text;
+                option.setAttribute('data-value', optionsArray[index].text);
+                option.dataset.isCorrect = optionsArray[index].isCorrect;
             });
 
             // Reset feedback and selected answer
@@ -303,10 +320,16 @@
                             feedback.innerHTML = `<p>Correct! 🎉</p><div class="explanation">${aiResult.explanation}</div>`;
                             // Enable the "Next" button for correct answer
                             nextButton.classList.remove('disabled');
+                            // Disable all options after selection
+                            options.forEach(opt => {
+                                opt.classList.add('disabled');
+                            });
                         } else {
                             option.classList.add('incorrect');
+                            option.classList.add('disabled');
                             feedback.className = 'feedback incorrect';
                             feedback.innerHTML = `<p>Incorrect. ❌</p><div class="explanation">${aiResult.explanation}</div>`;
+                            nextButton.classList.add('disabled');
                         }
                         feedback.style.display = 'block';
                     }
@@ -326,10 +349,7 @@
                     selectedAnswer = option;
                     selectedAnswer.classList.add('selected');
 
-                    // Disable all options after selection
-                    options.forEach(opt => {
-                        opt.classList.add('disabled');
-                    });
+                    
 
                     const userResponse = selectedAnswer.getAttribute('data-value').trim();
 
@@ -338,13 +358,18 @@
                         selectedAnswer.classList.add('correct');
                         feedback.className = 'feedback correct';
                         feedback.innerHTML = `<p>Correct! 🎉</p><div class="explanation">${aiResult.explanation}</div>`;
-
+                        
+                        // Disable all options after selection
+                        options.forEach(opt => {
+                            opt.classList.add('disabled');
+                        });
                         // Enable the "Next" button after correct answer
                         nextButton.classList.remove('disabled');
                     } else {
                         selectedAnswer.classList.add('incorrect');
                         feedback.className = 'feedback incorrect';
-                        feedback.innerHTML = `<p>Incorrect. ❌</p><div class="explanation">${aiResult.explanation}</div>`;
+                        feedback.innerHTML = `<p>Incorrect. ❌</p>`;
+                        selectedAnswer.classList.add('disabled');
                     }
 
                     // Display feedback
@@ -355,6 +380,10 @@
                 });
             });
 
+            if (!(currentQuestionIndex < aiResults.length - 1)) {
+                nextButton.classList.add('disabled');
+            }
+
             // Enable or disable the "Back" button based on the question index
             if (currentQuestionIndex > 0) {
                 backButton.classList.remove('disabled');
@@ -362,6 +391,7 @@
                 backButton.classList.add('disabled');
             }
         }
+
 
         // Handle "Next" button click
         nextButton.addEventListener('click', (e) => {
