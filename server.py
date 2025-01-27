@@ -493,7 +493,7 @@ class QuizAI:
         print(e)
         return False
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import markdown
 from bs4 import BeautifulSoup
 import json
@@ -643,7 +643,6 @@ def quiz_maker():
 def generated_quiz():
     return render_template('generated-quiz.html', quizfile="static/quiz-data.json")
 
-import jsonify
 # Endpoint to signal clearing localStorage
 @app.route('/clear-localstorage', methods=['POST'])
 def clear_localstorage():
