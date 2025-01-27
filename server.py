@@ -267,7 +267,7 @@ class Summarizer:
                                  persist_directory=".")
 
         # Initialize a language model with ChatOpenAI
-        self.llm = ChatOpenAI(model_name= 'gpt-3.5-turbo', temperature=0.6)
+        self.llm = ChatOpenAI(model_name= 'gpt-4o', temperature=0.6)
 
         #Setup a prompt template
         template = """\
@@ -296,6 +296,9 @@ class Summarizer:
         specific topics. Just give bullet point summaries.
 
         USE MARKDOWN FORMATTING FOR BULLET POINTS. 
+
+        If user requests summary as notes or flashcards like, give them nice bullet
+        point notes so they can write it down.
 
         Question: {question}
 

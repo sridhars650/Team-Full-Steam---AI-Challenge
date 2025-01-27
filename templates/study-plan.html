@@ -131,6 +131,22 @@
                 padding: 10px;
             }
         }
+        .back-button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -161,6 +177,7 @@
             </div>
             {% endif %}
         </section>
+        <a href="/" class="back-button">Back to Home</a>
     </div>
 
     <script>

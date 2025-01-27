@@ -115,6 +115,23 @@
             border-radius: 6px;
             text-align: left;
         }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -137,13 +154,7 @@
 
             <button type="submit" id="submitButton">Ask Quiz Bot</button>
         </form>
-
-        <div id="result">
-            {% if result %}
-                <p><strong>Question:</strong> {{ result.query | safe}}</p>
-                <p id="answer"><strong>Answer:</strong> {{ result.result | safe }}</p>
-            {% endif %}
-        </div>
+        <a href="/" class="back-button">Back to Home</a>
     </div>
 
     <script>
