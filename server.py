@@ -463,9 +463,9 @@ class QuizAI:
         question = input_dict.get("question")
         
         # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
-        # if (self.guardrails(question) == False):
-        #   print("It has failed (this is only a message to debug)\n")
-        #   return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        if (self.guardrails(question) == False):
+          print("It has failed (this is only a message to debug)\n")
+          return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
         
         combined_context = self.build_combined_context()
 
@@ -477,9 +477,9 @@ class QuizAI:
         self.update_chat_history(question, result['result'])
 
         # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
-        # if (self.guardrails(result['result']) == False):
-        #     print("the LLM has generated a bad resposne (this is a message to debug)")
-        #     return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        if (self.guardrails(result['result']) == False):
+            print("the LLM has generated a bad resposne (this is a message to debug)")
+            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
 
         return result
 
@@ -579,7 +579,6 @@ def generate_plan():
 
 @app.route('/quiz', methods=['GET', "POST"])
 def quiz_maker():
-    global QUIZGENERATED
     if request.method == "POST":
         if 'file' not in request.files:
             print('No file uploaded!')
@@ -592,7 +591,6 @@ def quiz_maker():
         quiz = QuizAI()
         print(prompt_data)
         result = quiz.invoke({'question' : prompt_data})
-        QUIZGENERATED = True
         print(result)
 
         # Parse the result HTML to extract the question, answer, and explanation
@@ -637,47 +635,15 @@ def quiz_maker():
             print("Quiz data successfully parsed and saved to 'quiz-data.json'!")
 
         # Render the template with the file path passed as a parameter
-        return render_template('generated-quiz.html', quiz_file=quiz_filepath)
+        return redirect(url_for('generated_quiz'))
 
     return render_template("quiz.html")
 
 @app.route('/generated-quiz', methods=['GET'])
 def generated_quiz():
-    global QUIZGENERATED
-    QUIZGENERATED = True
-    if QUIZGENERATED:
-        # The AI result data you provided
-        ai_result = {
-            'query': 'Quiz me on Chapter 1.',
-            'context': 'Chat history:\n\n\nContext from the document:\nThis page intentionally left blank\nThis page intentionally left blank\nThis page intentionally left blank\nThis page intentionally left blank',
-            'result': '''<hr />\n<p>Query: Quiz me on Chapter 1</p>
-                         <p>Quiz Question: What is the main topic covered in Chapter 1 of the textbook?</p>
-                         <p>Quiz Answer: The main topic covered in Chapter 1 is introduction to the subject.</p>
-                         <p>Quiz Answer Explanation: Chapter 1 typically serves as an introduction to the subject matter of the textbook, providing an overview of what will be discussed in the following chapters.</p>
-                         <hr />'''
-        }
+    return render_template('generated-quiz.html', quizfile="static/quiz-data.json")
 
-        # Parse the result HTML to extract the question, answer, and explanation
-        soup = BeautifulSoup(ai_result['result'], 'html.parser')
 
-        # Extract the relevant parts
-        try:
-            # Ensure we have enough <p> elements
-            paragraphs = soup.find_all('p')
-            if len(paragraphs) >= 4:
-                question = paragraphs[1].text.split(':')[1].strip()
-                answer = paragraphs[2].text.split(':')[1].strip()
-                explanation = paragraphs[3].text.split(':')[1].strip()
-            else:
-                raise ValueError("Insufficient <p> tags in the result HTML.")
-        except Exception as e:
-            # Handle the case where there are not enough <p> tags or the content is malformed
-            return f"Error parsing the quiz result: {str(e)}", 500
-
-        # Pass the parsed data to the template
-        return render_template('generated-quiz.html', question=question, answer=answer, explanation=explanation)
-
-    return "404 Not Found", 404
 
 if __name__ == "__main__":
     #from waitress import serve
