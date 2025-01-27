@@ -13,3 +13,4 @@ waitress
 setuptools 
 bs4
 pydantic
+jsonify

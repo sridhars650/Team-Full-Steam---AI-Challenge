@@ -230,6 +230,29 @@
     </div>
 
     <script>
+        function clearLocalStorage() {
+            localStorage.clear();
+            console.log("LocalStorage cleared!");
+        }
+
+        function pollClearSignal() {
+            setInterval(() => {
+                fetch('/clear-localstorage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.clear) {
+                        clearLocalStorage();
+                    }
+                });
+            }, 5000); // Poll every 5 seconds
+        }
+
+        window.onload = pollClearSignal;
+
+        
         document.addEventListener('DOMContentLoaded', () => {
         const questionElement = document.getElementById('question');
         const feedback = document.getElementById('feedback');

@@ -643,7 +643,11 @@ def quiz_maker():
 def generated_quiz():
     return render_template('generated-quiz.html', quizfile="static/quiz-data.json")
 
-
+import jsonify
+# Endpoint to signal clearing localStorage
+@app.route('/clear-localstorage', methods=['POST'])
+def clear_localstorage():
+    return jsonify({"clear": True})  # Signal to clear localStorage
 
 if __name__ == "__main__":
     #from waitress import serve
