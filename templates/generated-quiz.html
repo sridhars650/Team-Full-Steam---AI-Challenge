@@ -277,6 +277,7 @@
             }
         }
 
+
         function loadQuestion() {
             const aiResult = aiResults[currentQuestionIndex];
 
@@ -289,9 +290,10 @@
                 isCorrect: option === aiResult.correct_answer
             }));
 
+            
             // Shuffle the options array to randomize
             shuffleArray(optionsArray);
-
+            
             // Populate options dynamically from shuffled options array
             options.forEach((option, index) => {
                 option.textContent = optionsArray[index].text;
@@ -338,18 +340,20 @@
                 // If there's no stored answer, make sure "Next" is disabled
                 nextButton.classList.add('disabled');
             }
-
+            
             // Handle option selection
             options.forEach(option => {
                 option.addEventListener('click', () => {
+                    // Prevent click event if the option is disabled
+                    if (option.classList.contains('disabled')) {
+                        return; // Do nothing if the button is disabled
+                    }
                     // If an answer is already selected, remove the color classes
                     if (selectedAnswer) {
                         selectedAnswer.classList.remove('correct', 'incorrect');
                     }
                     selectedAnswer = option;
                     selectedAnswer.classList.add('selected');
-
-                    
 
                     const userResponse = selectedAnswer.getAttribute('data-value').trim();
 
@@ -369,7 +373,7 @@
                         selectedAnswer.classList.add('incorrect');
                         feedback.className = 'feedback incorrect';
                         feedback.innerHTML = `<p>Incorrect. ❌</p>`;
-                        selectedAnswer.classList.add('disabled');
+                        //selectedAnswer.classList.add('disabled');
                     }
 
                     // Display feedback
@@ -413,6 +417,7 @@
             // If the "Back" button is not disabled, go to the previous question
             if (!backButton.classList.contains('disabled')) {
                 currentQuestionIndex--;
+                console.log("Current question index:", currentQuestionIndex);
                 if (currentQuestionIndex >= 0) {
                     loadQuestion();
                 }
