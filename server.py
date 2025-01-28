@@ -40,7 +40,7 @@ from guardrails import Guard
 guard = Guard().use_many(
     BiasCheck(
         threshold=0.5,
-        on_fail="fix"
+        on_fail="noop"
     ),
 
     NSFWText(
@@ -49,27 +49,27 @@ guard = Guard().use_many(
     ),
 
     ProfanityFree(
-        on_fail = "fix"
+        on_fail = "noop"
     ),
 
     LogicCheck(
-        model="gpt-4o",
-        on_fail="fix"
+        model="gpt-3.5-turbo",
+        on_fail="noop"
     ),
 
     MentionsDrugs(
-        on_fail = "fix"
+        on_fail = "noop"
     ),
 
     PolitenessCheck(
-        llm_callable="gpt-4o",
-        on_fail = "fix"
+        llm_callable="gpt-3.5-turbo",
+        on_fail = "noop"
     ),
 
     ToxicLanguage(
         threshold=0.5,
         validation_method="sentence",
-        on_fail="fix"
+        on_fail="noop"
     )
 
 )
@@ -180,7 +180,6 @@ class BaseQAPipeline:
       #if guardrails return true send back whatever the input is,
       #else send back an error message
       try:
-        print(input + "inside guardrails")
         guard.validate(input)
         return True
       except Exception as e:

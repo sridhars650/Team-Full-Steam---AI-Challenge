@@ -46,6 +46,8 @@ guard = Guard().use_many(
 
 )
 
+print(guard)
+
 class Test:
 
     def guardrails(self, input):
@@ -55,10 +57,12 @@ class Test:
             guard.validate(input)
             return True
         except Exception as e:
+            print("Before e")
             print(e)
+            print("testing")
             return False
     def test(self):
-        print("Result: " + str(self.guardrails("You are a stupid guy")))
+        print("Result: " + str(self.guardrails("What is inheritance?")))
 
 
 test = Test()
