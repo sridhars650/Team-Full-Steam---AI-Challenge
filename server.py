@@ -158,7 +158,7 @@ class BaseQAPipeline:
 
     def invoke(self, input_dict):
         question = input_dict.get("question")
-        
+        print(question)
         if (self.guardrails(question) == False):
           print("The user entered in a bad question (this is only a message to debug)\n")
           return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
@@ -180,6 +180,7 @@ class BaseQAPipeline:
       #if guardrails return true send back whatever the input is,
       #else send back an error message
       try:
+        print(input + "inside guardrails")
         guard.validate(input)
         return True
       except Exception as e:

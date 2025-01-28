@@ -58,7 +58,7 @@ class Test:
             print(e)
             return False
     def test(self):
-        print("Result: " + str(self.guardrails("What is an EDR?")))
+        print("Result: " + str(self.guardrails("You are a stupid guy")))
 
 
 test = Test()
