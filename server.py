@@ -173,7 +173,7 @@ class BaseQAPipeline:
 
         if (self.guardrails(result['result']) == False):
             print("the LLM has generated a bad resposne (this is a message to debug)")
-            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+            return {'query': question, 'context': 'No context.', 'result': 'Sorry, The LLM has generated a bad response.'}
         return result
 
     def guardrails(self, input):
@@ -360,9 +360,9 @@ class Summarizer:
 
         self.update_chat_history(question, result['result'])
 
-        if (self.guardrails(result['result']) == False):
-            print("the LLM has generated a bad resposne (this is a message to debug)")
-            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        # if (self.guardrails(result['result']) == False):
+        #     print("the LLM has generated a bad resposne (this is a message to debug)")
+        #     return {'query': question, 'context': 'No context.', 'result': 'Sorry, The LLM has generated a bad response.'}
 
         return result
 
@@ -479,7 +479,7 @@ class QuizAI:
         # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
         # if (self.guardrails(result['result']) == False):
         #     print("the LLM has generated a bad resposne (this is a message to debug)")
-        #     return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        #     return {'query': question, 'context': 'No context.', 'result': 'Sorry, The LLM has generated a bad response.'}
 
         return result
 
