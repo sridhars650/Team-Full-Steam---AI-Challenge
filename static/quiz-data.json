@@ -1,112 +1,112 @@
 [
     {
-        "question": "What is a key concern Nicolette faces after her job interview was conducted by a computer program?",
-        "correct_answer": "She is frustrated with not knowing the basis for the decision against her.",
+        "question": "What is the primary focus of Chapter 2 in the textbook?",
+        "correct_answer": "Objects and Classes",
         "options": [
-            "She is frustrated with not knowing the basis for the decision against her.",
-            "She is happy with the transparency of the decision-making process.",
-            "She is relieved that the decision was made quickly, regardless of the outcome.",
-            "She is indifferent to the decision and the process."
+            "Objects and Classes",
+            "Arrays and Lists",
+            "Data Structures",
+            "Algorithms and Complexity"
         ],
-        "explanation": "Nicolette's frustration stems from the lack of transparency in the decision-making process, which is a common concern regarding the use of artificial intelligence in such contexts."
+        "explanation": "Chapter 2 of the textbook primarily focuses on \"Objects and Classes,\" as indicated in the table of contents provided. This chapter discusses the foundational concepts of object-oriented programming, including the structure and behavior of objects and the use of classes to define them."
     },
     {
-        "question": "Who proposed the \"Laws of Robotics\" in 1950?",
-        "correct_answer": "Isaac Asimov",
+        "question": "What is the purpose of a constructor in a class?",
+        "correct_answer": "To initialize the object's fields when an object is created",
         "options": [
-            "Isaac Asimov",
-            "Alan Turing",
-            "Stephen Hawking",
-            "Nikola Tesla"
+            "To initialize the object's fields when an object is created",
+            "To destroy an object when it is no longer needed",
+            "To define the behavior of an object",
+            "To create a copy of an existing object"
         ],
-        "explanation": "Isaac Asimov, a science fiction writer, proposed the \"Laws of Robotics\" in 1950 as abstract principles to guide the performance of intelligent devices."
+        "explanation": "A constructor is a special method in a class that is called when an object is instantiated. Its purpose is to initialize the object's fields with default or specified values."
     },
     {
-        "question": "What is the First Law of Robotics according to Isaac Asimov?",
-        "correct_answer": "A robot may not injure a human being or, through inaction, allow a human being to come to harm.",
+        "question": "What is inheritance in object-oriented programming?",
+        "correct_answer": "A mechanism where a new class can inherit properties and methods from an existing class",
         "options": [
-            "A robot may not injure a human being or, through inaction, allow a human being to come to harm.",
-            "A robot must always follow human commands without question.",
-            "A robot must prioritize its own existence above all else.",
-            "A robot should never interact with humans."
+            "A mechanism where a new class can inherit properties and methods from an existing class",
+            "A way to hide data within a class",
+            "A process of converting objects to primitive data types",
+            "A method to store multiple values in a single variable"
         ],
-        "explanation": "The First Law emphasizes the safety and protection of humans, prohibiting robots from causing harm either directly or indirectly."
+        "explanation": "Inheritance allows a new class to inherit the properties and methods of an existing class, enabling code reuse and the creation of hierarchical class structures."
     },
     {
-        "question": "According to Asimov, what must a robot do according to the Second Law of Robotics?",
-        "correct_answer": "A robot must obey the orders given it by human beings except where such orders would conflict with the First Law.",
+        "question": "What is the term used for a class that provides a blueprint for creating objects?",
+        "correct_answer": "Class",
         "options": [
-            "A robot must obey the orders given it by human beings except where such orders would conflict with the First Law.",
-            "A robot must always operate independently of human orders.",
-            "A robot must prioritize its own programming over human commands.",
-            "A robot should only follow orders if it benefits its own existence."
+            "Class",
+            "Object",
+            "Method",
+            "Interface"
         ],
-        "explanation": "The Second Law requires robots to follow human orders unless doing so would cause harm to humans, as stated in the First Law."
+        "explanation": "A class in object-oriented programming serves as a blueprint for creating objects. It defines the properties (fields) and behaviors (methods) that the objects created from it can have."
     },
     {
-        "question": "What is the Third Law of Robotics as described by Isaac Asimov?",
-        "correct_answer": "A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.",
+        "question": "Which of the following is NOT a component of a class?",
+        "correct_answer": "Algorithm",
         "options": [
-            "A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.",
-            "A robot should prioritize its own safety above all human interactions.",
-            "A robot must never protect its own existence under any circumstances.",
-            "A robot should protect its existence even if it conflicts with human safety."
+            "Algorithm",
+            "Field",
+            "Constructor",
+            "Method"
         ],
-        "explanation": "The Third Law allows for self-preservation but only if it does not conflict with the safety of humans or obedience to human orders as described in the First and Second Laws."
+        "explanation": "A class typically consists of fields, constructors, and methods. An algorithm, while it can be implemented within a method, is not a direct component of a class."
     },
     {
-        "question": "How do Asimov's Laws of Robotics interact in fictional narratives?",
-        "correct_answer": "They interact in surprising ways, especially in the hands of an expert writer of fiction.",
+        "question": "What is the role of methods within a class?",
+        "correct_answer": "To define the behavior of objects created from the class",
         "options": [
-            "They interact in surprising ways, especially in the hands of an expert writer of fiction.",
-            "They always create predictable and straightforward scenarios.",
-            "They do not interact and are used independently.",
-            "They primarily create conflict between robots and humans."
+            "To define the behavior of objects created from the class",
+            "To store data within an object",
+            "To initialize object fields",
+            "To create new classes"
         ],
-        "explanation": "Asimov's Laws often create complex and unexpected situations in stories, demonstrating the nuanced challenges of programming ethics in artificial intelligence."
+        "explanation": "Methods within a class define the behavior of the objects created from that class. They are functions that operate on the data contained within the object."
     },
     {
-        "question": "Why is the world moving from imagining to experiencing what happens with AI?",
-        "correct_answer": "Because AI is increasingly being integrated into real-world applications, impacting everyday life.",
+        "question": "In object-oriented programming, what term describes the ability to hide the internal details of an object?",
+        "correct_answer": "Encapsulation",
         "options": [
-            "Because AI is increasingly being integrated into real-world applications, impacting everyday life.",
-            "Because the world is losing interest in science fiction.",
-            "Because AI is no longer relevant in modern technology discussions.",
-            "Because AI has solved all ethical dilemmas."
+            "Encapsulation",
+            "Inheritance",
+            "Polymorphism",
+            "Abstraction"
         ],
-        "explanation": "The transition reflects the growing presence of AI in practical scenarios, raising real-world implications and ethical concerns."
+        "explanation": "Encapsulation is the concept of hiding the internal details of an object and only exposing necessary components. This is achieved by using access modifiers and defining public interfaces."
     },
     {
-        "question": "What is a canonical manifestation of misgivings about AI according to Chapter 1?",
-        "correct_answer": "The frustration of individuals like Nicolette who do not understand the basis for AI decisions.",
+        "question": "What keyword is used to create a new object in Java?",
+        "correct_answer": "new",
         "options": [
-            "The frustration of individuals like Nicolette who do not understand the basis for AI decisions.",
-            "The seamless integration of AI into everyday life without any issues.",
-            "The overwhelming success of AI in all fields.",
-            "The complete elimination of human jobs by AI."
+            "new",
+            "create",
+            "object",
+            "instance"
         ],
-        "explanation": "Nicolette's experience highlights a common concern about AI's lack of transparency and accountability in decision-making processes."
+        "explanation": "In Java, the keyword \"new\" is used to create a new instance of an object. It allocates memory for the object and calls the constructor."
     },
     {
-        "question": "What year did Isaac Asimov propose the Laws of Robotics?",
-        "correct_answer": "1950",
+        "question": "What is the difference between a field and a method in a class?",
+        "correct_answer": "A field is a variable that holds data, while a method defines behavior.",
         "options": [
-            "1950",
-            "1940",
-            "1960",
-            "1980"
+            "A field is a variable that holds data, while a method defines behavior.",
+            "A field defines behavior, while a method holds data.",
+            "Both are used to initialize an object.",
+            "There is no difference; they are synonyms."
         ],
-        "explanation": "Isaac Asimov introduced the Laws of Robotics in 1950, setting foundational ethical guidelines for fictional AI."
+        "explanation": "A field is a variable within a class that holds data, while a method is a function within a class that defines the behavior of the objects created from that class."
     },
     {
-        "question": "Why might the simple rules of the Laws of Robotics be considered complex in practice?",
-        "correct_answer": "They can interact in surprising ways, leading to complex ethical and practical scenarios.",
+        "question": "Which of the following best describes a case study in programming?",
+        "correct_answer": "An in-depth exploration of a practical example to illustrate concepts",
         "options": [
-            "They can interact in surprising ways, leading to complex ethical and practical scenarios.",
-            "They are too simple to apply to any real-world situation.",
-            "They do not cover enough situations to be useful.",
-            "They prevent robots from functioning effectively."
+            "An in-depth exploration of a practical example to illustrate concepts",
+            "A theoretical explanation of programming paradigms",
+            "A list of programming languages",
+            "A glossary of technical terms"
         ],
-        "explanation": "The interaction of these laws can create intricate dilemmas and scenarios, particularly in fictional narratives that explore AI's implications."
+        "explanation": "A case study in programming involves an in-depth exploration of a practical example to demonstrate and illustrate programming concepts effectively."
     }
 ]
