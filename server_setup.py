@@ -1,8 +1,6 @@
 import subprocess
 import sys, os,time 
 import os
-from dotenv import load_dotenv
-load_dotenv() 
 
 def install_packages():
     """Install packages from requirements.txt if not already installed."""
@@ -22,6 +20,8 @@ def install_guardrail_pkgs(package):
 
 def main():
     """Main server logic."""
+    from dotenv import load_dotenv
+    load_dotenv() 
     print("All requirements are satisfied. Proceeding with the main code...")
     subprocess.check_call(["guardrails", "configure", "--token", os.getenv('GUARDRAILS_CLI_TOKEN') , "--disable-remote-inferencing", "--disable-metrics"])
     guardrail_pkgs = ["hub://guardrails/ban_list", "hub://guardrails/bias_check", "hub://guardrails/nsfw_text", 
