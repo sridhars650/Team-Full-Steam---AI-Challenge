@@ -20,7 +20,6 @@ def install_guardrail_pkgs(package):
 def main():
     """Main server logic."""
     print("All requirements are satisfied. Proceeding with the main code...")
-    subprocess.check_call(["guardrails", "configure"])
     guardrail_pkgs = ["hub://guardrails/ban_list", "hub://guardrails/bias_check", "hub://guardrails/nsfw_text", 
            "hub://guardrails/profanity_free", "hub://guardrails/logic_check", "hub://cartesia/mentions_drugs",
            "hub://guardrails/politeness_check", "hub://guardrails/toxic_language"]
