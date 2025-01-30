@@ -14,4 +14,4 @@ setuptools
 bs4
 pydantic
 jsonify
-dotenv
+python-dotenv

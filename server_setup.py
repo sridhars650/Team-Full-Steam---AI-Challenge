@@ -40,7 +40,7 @@ if __name__ == "__main__":
     try:
         # Check if requirements are already installed
         subprocess.check_call([sys.executable, "-m", "pip", "check"])
-        install_packages()
+        # install_packages()
     except subprocess.CalledProcessError:
         print("Requirements are missing or outdated. Installing...")
         install_packages()
