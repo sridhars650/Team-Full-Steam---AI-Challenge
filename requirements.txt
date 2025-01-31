@@ -15,4 +15,3 @@ bs4
 pydantic
 jsonify
 python-dotenv
-distribute
