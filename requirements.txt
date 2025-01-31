@@ -13,5 +13,4 @@ waitress
 setuptools 
 bs4
 pydantic
-jsonify
 python-dotenv
