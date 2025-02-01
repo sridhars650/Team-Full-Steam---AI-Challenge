@@ -188,69 +188,179 @@ class BaseQAPipeline:
       
 #Setup GenerateStudyPlan pipeline
 class GenerateStudyPlan:
+    def __init__(self):
+        self.doc = "tutor_textbook.pdf"
+        self.loader = PyPDFLoader(self.doc)
+
+        # Load the document and store it in the 'data' variable
+        self.data = self.loader.load_and_split()
+
+        self.embeddings = OpenAIEmbeddings()
+        self.vectordb = Chroma.from_documents(self.data, embedding=self.embeddings,
+                                 persist_directory=".")
+
+        # Initialize a language model with ChatOpenAI
+        self.llm = ChatOpenAI(model_name= 'gpt-4o', temperature=0.6)
+
+        #Setup a prompt template
+        template = """\
+        You are an assistant for question-answering tasks.
+
+        Use the following pieces of retrieved context to answer the question.
+
+        If either the PDF or the question are not related to each other or not 
+        related to any educational standard, state the following: This content is 
+        not related to any educational purposes. 
+
+        For example, if topics are not the same, like a java textbook is given, 
+        however, the user asks about a physics question, state the following: This
+        content is not related to the inputted textbook, please select another textbook
+        and try again.
+
+        If you don't know the answer, just say that you don't know.
+
+        Use three sentences maximum and keep the answer concise. 
+
+        Question: {question}
+
+        Context: {context}
+
+        Answer:
+
+        """
+
+        prompt = ChatPromptTemplate.from_template(template)
+
+        chain_type_kwargs = {"prompt": prompt}
+
+
+
+        # 1. Vectorstore-based retriever
+        self.vectorstore_retriever = self.vectordb.as_retriever()
+
+        # Initialize a RetrievalQA chain with the language model and vector database retriever
+        self.qa_chain = RetrievalQA.from_chain_type(self.llm, retriever= self.vectorstore_retriever, chain_type_kwargs=chain_type_kwargs)
+        self.chat_history = []  # Initialize chat history
+
+    def update_chat_history(self, question, answer):
+        self.chat_history.append({"question": question, "answer": answer})
+
+    def build_combined_context(self):
+        """Combine chat history and document context."""
+        # Combine all previous chat history
+        chat_context = "\n".join([f"Q: {entry['question']}\nA: {entry['answer']}" for entry in self.chat_history])
+        
+        # Fetch relevant context from the vector store based on the current question
+        if self.chat_history:
+            current_question = self.chat_history[-1]['question']
+            context_from_db = self.vectorstore_retriever.get_relevant_documents(current_question)
+        else:
+            context_from_db = self.vectorstore_retriever.get_relevant_documents("")
+
+        # Convert the list of context documents into a string
+        context_str = "\n".join([doc.page_content for doc in context_from_db])
+
+        # Combine both chat history and the document context
+        combined_context = f"Chat history:\n{chat_context}\n\nContext from the document:\n{context_str}"
+        
+        return combined_context
+
 
     def invoke(self, input_dict):
-        # Load data from PDF
-        file_path = "tutor_textbook.pdf"
+        question = input_dict.get("question")
+        print(question)
+        if (self.guardrails(question) == False):
+          print("The user entered in a bad question (this is only a message to debug)\n")
+          return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        combined_context = self.build_combined_context()
 
-        loader = PyPDFLoader(file_path)
-        data = loader.load()
+        result = self.qa_chain.invoke({
+            "query": question,
+            "context": combined_context
+        })
 
-        # Combine text from Document into one string for question generation
-        text_question_gen = ''
-        for page in data:
-            text_question_gen += page.page_content
+        self.update_chat_history(question, result['result'])
 
-        # Initialize Text Splitter for question generation
-        text_splitter_question_gen = TokenTextSplitter(model_name="gpt-3.5-turbo", chunk_size=10000, chunk_overlap=200)
+        if (self.guardrails(result['result']) == False):
+            print("the LLM has generated a bad resposne (this is a message to debug)")
+            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        return result
 
-        # Split text into chunks for question generation
-        text_chunks_question_gen = text_splitter_question_gen.split_text(text_question_gen)
+    def guardrails(self, input):
+      #if guardrails return true send back whatever the input is,
+      #else send back an error message
+      try:
+        guard.validate(input)
+        return True
+      except Exception as e:
+        print(e)
+        return False
+       
 
-        # Convert chunks into Documents for question generation
-        docs_question_gen = [Document(page_content=t) for t in text_chunks_question_gen]
+    #def invoke(self, input_dict):
+        # # Load data from PDF
+        # file_path = "tutor_textbook.pdf"
 
-        # Initialize Text Splitter for answer generation
-        text_splitter_answer_gen = TokenTextSplitter(model_name="gpt-3.5-turbo", chunk_size=1000, chunk_overlap=100)
+        # loader = PyPDFLoader(file_path)
+        # data = loader.load()
 
-        # Split documents into chunks for answer generation
-        docs_answer_gen = text_splitter_answer_gen.split_documents(docs_question_gen)
+        # # Combine text from Document into one string for question generation
+        # text_question_gen = ''
+        # for page in data:
+        #     text_question_gen += page.page_content
 
-        # Initialize Large Language Model for question generation
-        llm_question_gen = ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"),temperature=0.4, model="gpt-3.5-turbo")
+        # # Initialize Text Splitter for question generation
+        # text_splitter_question_gen = TokenTextSplitter(model_name="gpt-4o", chunk_size=10000, chunk_overlap=200)
 
-        # Initialize question generation chain
-        question_gen_chain = load_summarize_chain(llm = llm_question_gen, chain_type = "refine", verbose = True, question_prompt=PROMPT_QUESTIONS, refine_prompt=REFINE_PROMPT_QUESTIONS)
+        # # Split text into chunks for question generation
+        # text_chunks_question_gen = text_splitter_question_gen.split_text(text_question_gen)
 
-        # Run question generation chain
-        questions = question_gen_chain.run(docs_question_gen)
+        # # Convert chunks into Documents for question generation
+        # docs_question_gen = [Document(page_content=t) for t in text_chunks_question_gen]
 
-        # Initialize Large Language Model for answer generation
-        llm_answer_gen = ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"),temperature=0.1, model="gpt-3.5-turbo")
+        # # Initialize Text Splitter for answer generation
+        # text_splitter_answer_gen = TokenTextSplitter(model_name="gpt-4o", chunk_size=1000, chunk_overlap=100)
 
-        # Create vector database for answer generation
-        embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
+        # # Split documents into chunks for answer generation
+        # docs_answer_gen = text_splitter_answer_gen.split_documents(docs_question_gen)
 
-        # Initialize vector store for answer generation
-        vector_store = Chroma.from_documents(docs_answer_gen, embeddings)
+        # # Initialize Large Language Model for question generation
+        # llm_question_gen = ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"),temperature=0.4, model="gpt-4o")
 
-        # Initialize retrieval chain for answer generation
-        answer_gen_chain = RetrievalQA.from_chain_type(llm=llm_answer_gen, chain_type="stuff", retriever=vector_store.as_retriever(k=2))
+        # # Initialize question generation chain
+        # question_gen_chain = load_summarize_chain(llm = llm_question_gen, chain_type = "refine", verbose = False, question_prompt=PROMPT_QUESTIONS, refine_prompt=REFINE_PROMPT_QUESTIONS)
 
-        # Split generated questions into a list of questions
-        question_list = questions.split("\\n")
+        # # Run question generation chain
+        # questions = question_gen_chain.run(docs_question_gen)
 
-        # Answer each question and save to a file
-        for question in question_list:
-            # print("Question: ", question)
-            answer = answer_gen_chain.run(question)
-            # print("Answer: ", answer)
-            # print("--------------------------------------------------\\n\\n")
-            # Save answer to file
-            with open("answers.txt", "a") as f:
-                f.write("Question: " + question + "\\n")
-                f.write("Answer: " + answer + "\\n")
-                f.write("--------------------------------------------------\\n\\n")
+        # # Initialize Large Language Model for answer generation
+        # llm_answer_gen = ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"),temperature=0.1, model="gpt-4o")
+
+        # # Create vector database for answer generation
+        # embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
+
+        # # Initialize vector store for answer generation
+        # vector_store = Chroma.from_documents(docs_answer_gen, embeddings)
+
+        # # Initialize retrieval chain for answer generation
+        # answer_gen_chain = RetrievalQA.from_chain_type(llm=llm_answer_gen, chain_type="stuff", retriever=vector_store.as_retriever(k=2))
+
+        # # Split generated questions into a list of questions
+        # question_list = questions.split("\\n")
+
+        # # Answer each question and save to a file
+        # for question in question_list:
+        #     print("Question: ", question)
+        #     answer = answer_gen_chain.run(question)
+        #     print("Answer: ", answer)
+        #     print("--------------------------------------------------\\n\\n")
+        #     # Save answer to file
+        #     # with open("answers.txt", "a") as f:
+        #     #     f.write("Question: " + question + "\\n")
+        #     #     f.write("Answer: " + answer + "\\n")
+        #     #     f.write("--------------------------------------------------\\n\\n")
+        
+        #return "helo"
     
 
 #Setup Summarizer pipeline
@@ -271,7 +381,7 @@ class Summarizer:
 
         #Setup a prompt template
         template = """\
-            You are an assistant for summarizing the textbook.
+        You are an assistant for summarizing the textbook.
 
         If the user has given a topic or topics, make the summary more focused on those topics.
 
