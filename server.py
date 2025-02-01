@@ -204,9 +204,10 @@ class GenerateStudyPlan:
 
         #Setup a prompt template
         template = """\
-        You are an assistant for question-answering tasks.
-
-        Use the following pieces of retrieved context to answer the question.
+        You are an expert in making highly customized and personilized study plans. A user has asked you to make
+        then a study plan, and you will give them your best work. Feel free to use the user's data to make their
+        study plan more personilized. Make sure to revolve the study plan around the user's weaknesses. Create an
+        outline for this plan and elaborate on certain parts where you think that the user needs more help. 
 
         If either the PDF or the question are not related to each other or not 
         related to any educational standard, state the following: This content is 
@@ -217,9 +218,7 @@ class GenerateStudyPlan:
         content is not related to the inputted textbook, please select another textbook
         and try again.
 
-        If you don't know the answer, just say that you don't know.
-
-        Use three sentences maximum and keep the answer concise. 
+         
 
         Question: {question}
 
