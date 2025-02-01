@@ -791,7 +791,7 @@ def get_clear_status():
 if __name__ == "__main__":
     from waitress import serve
     host = "0.0.0.0"
-    port = 8080
+    port = 10000
     os.system("clear")
     print(f"Server is running on {host}:{port}")
     serve(app, host=host, port=port)
