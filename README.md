@@ -48,7 +48,7 @@ To locally host this project, follow these steps:
      ```  
    - Wait for all Guardrails to finish installing & until you see "Server is running on ____"  
 
-Type in localhost:8080 or 127.0.0.1:8080 to view the website!
+Type in localhost:10000 or 127.0.0.1:10000 to view the website!
 
 You're now ready to use the AI tutoring platform! 🚀 
 
@@ -100,11 +100,6 @@ Developed using **Flask**, the UI includes:
 - Uses **PyPDF2** to extract text from uploaded PDFs.
 - Implements **text cleaning and validation** to ensure quality content.
 
-### **System Flowchart**
-1. **User submits a question or uploads a textbook PDF.**
-2. **Backend processes the request and extracts relevant text.**
-3. **GPT-4 generates an answer, study plan, or quiz based on input.**
-4. **Results are displayed on the UI for student interaction.**
 
 ### **AI Model & Libraries**
 - **Core AI Model**: OpenAI’s GPT API
