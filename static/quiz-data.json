@@ -1,112 +1,112 @@
 [
     {
-        "question": "What is the primary focus of Chapter 2 in the textbook?",
-        "correct_answer": "Objects and Classes",
+        "question": "What is the primary advantage of using recursion in programming?",
+        "correct_answer": "Simplifies code by breaking down complex problems into simpler, repeatable tasks.",
         "options": [
-            "Objects and Classes",
-            "Arrays and Lists",
-            "Data Structures",
-            "Algorithms and Complexity"
+            "Simplifies code by breaking down complex problems into simpler, repeatable tasks.",
+            "Increases the speed of program execution.",
+            "Reduces memory usage significantly.",
+            "Ensures that programs are always bug-free."
         ],
-        "explanation": "Chapter 2 of the textbook primarily focuses on \"Objects and Classes,\" as indicated in the table of contents provided. This chapter discusses the foundational concepts of object-oriented programming, including the structure and behavior of objects and the use of classes to define them."
+        "explanation": "Recursion simplifies the code by allowing a function to call itself to solve smaller instances of the same problem, making it easier to manage and understand complex tasks."
     },
     {
-        "question": "What is the purpose of a constructor in a class?",
-        "correct_answer": "To initialize the object's fields when an object is created",
+        "question": "What is a base case in recursion?",
+        "correct_answer": "The condition under which a recursive function stops calling itself.",
         "options": [
-            "To initialize the object's fields when an object is created",
-            "To destroy an object when it is no longer needed",
-            "To define the behavior of an object",
-            "To create a copy of an existing object"
+            "The condition under which a recursive function stops calling itself.",
+            "The initial call made to a recursive function.",
+            "A loop that continues indefinitely.",
+            "A special kind of error that occurs in recursive functions."
         ],
-        "explanation": "A constructor is a special method in a class that is called when an object is instantiated. Its purpose is to initialize the object's fields with default or specified values."
+        "explanation": "A base case is a condition that stops the recursion by not making any further calls to the recursive function, preventing infinite loops."
     },
     {
-        "question": "What is inheritance in object-oriented programming?",
-        "correct_answer": "A mechanism where a new class can inherit properties and methods from an existing class",
+        "question": "Which of the following is NOT a common problem solved by recursion?",
+        "correct_answer": "Compiling code.",
         "options": [
-            "A mechanism where a new class can inherit properties and methods from an existing class",
-            "A way to hide data within a class",
-            "A process of converting objects to primitive data types",
-            "A method to store multiple values in a single variable"
+            "Compiling code.",
+            "Calculating factorials.",
+            "Solving the Towers of Hanoi.",
+            "Performing a binary search."
         ],
-        "explanation": "Inheritance allows a new class to inherit the properties and methods of an existing class, enabling code reuse and the creation of hierarchical class structures."
+        "explanation": "Compiling code is not typically solved using recursion, whereas the other options are classic examples of recursive problem solving."
     },
     {
-        "question": "What is the term used for a class that provides a blueprint for creating objects?",
-        "correct_answer": "Class",
+        "question": "How does tail recursion differ from regular recursion?",
+        "correct_answer": "In tail recursion, the recursive call is the last operation in the function.",
         "options": [
-            "Class",
-            "Object",
-            "Method",
-            "Interface"
+            "In tail recursion, the recursive call is the last operation in the function.",
+            "In tail recursion, the function calls itself multiple times before returning.",
+            "Tail recursion uses more memory than regular recursion.",
+            "Tail recursion is used only for sorting algorithms."
         ],
-        "explanation": "A class in object-oriented programming serves as a blueprint for creating objects. It defines the properties (fields) and behaviors (methods) that the objects created from it can have."
+        "explanation": "Tail recursion is a special case where the recursive call is the last operation, allowing optimizations that can improve performance."
     },
     {
-        "question": "Which of the following is NOT a component of a class?",
-        "correct_answer": "Algorithm",
+        "question": "What can happen if a recursive function does not have a proper base case?",
+        "correct_answer": "It can lead to infinite recursion and a stack overflow error.",
         "options": [
-            "Algorithm",
-            "Field",
-            "Constructor",
-            "Method"
+            "It can lead to infinite recursion and a stack overflow error.",
+            "The program will run faster than expected.",
+            "The function will compile but not execute.",
+            "The function will automatically find a base case."
         ],
-        "explanation": "A class typically consists of fields, constructors, and methods. An algorithm, while it can be implemented within a method, is not a direct component of a class."
+        "explanation": "Without a proper base case, the function will keep calling itself indefinitely, eventually causing a stack overflow error due to excessive memory usage."
     },
     {
-        "question": "What is the role of methods within a class?",
-        "correct_answer": "To define the behavior of objects created from the class",
+        "question": "Which of the following is a characteristic of a recursive algorithm?",
+        "correct_answer": "It solves a problem by solving smaller instances of the same problem.",
         "options": [
-            "To define the behavior of objects created from the class",
-            "To store data within an object",
-            "To initialize object fields",
-            "To create new classes"
+            "It solves a problem by solving smaller instances of the same problem.",
+            "It always executes in constant time.",
+            "It requires a large array to function.",
+            "It can only be used with integer data types."
         ],
-        "explanation": "Methods within a class define the behavior of the objects created from that class. They are functions that operate on the data contained within the object."
+        "explanation": "Recursive algorithms break down a problem into smaller, more manageable instances, often using the same logic repeatedly."
     },
     {
-        "question": "In object-oriented programming, what term describes the ability to hide the internal details of an object?",
-        "correct_answer": "Encapsulation",
+        "question": "What is the purpose of the recursive stack in recursion?",
+        "correct_answer": "To keep track of function calls and their return values.",
         "options": [
-            "Encapsulation",
-            "Inheritance",
-            "Polymorphism",
-            "Abstraction"
+            "To keep track of function calls and their return values.",
+            "To optimize the speed of the function.",
+            "To store the input data for the function.",
+            "To automatically resolve errors in the code."
         ],
-        "explanation": "Encapsulation is the concept of hiding the internal details of an object and only exposing necessary components. This is achieved by using access modifiers and defining public interfaces."
+        "explanation": "The recursive stack maintains a record of each function call and its state, allowing the program to return to the correct point after each recursive call finishes."
     },
     {
-        "question": "What keyword is used to create a new object in Java?",
-        "correct_answer": "new",
+        "question": "Which of the following best describes mutual recursion?",
+        "correct_answer": "When two or more functions call each other recursively.",
         "options": [
-            "new",
-            "create",
-            "object",
-            "instance"
+            "When two or more functions call each other recursively.",
+            "When a function calls itself with different parameters.",
+            "When a recursive function is used within a loop.",
+            "When recursion is applied to mathematical functions only."
         ],
-        "explanation": "In Java, the keyword \"new\" is used to create a new instance of an object. It allocates memory for the object and calls the constructor."
+        "explanation": "Mutual recursion occurs when two or more functions are recursive and call each other in a cycle, rather than a function calling itself directly."
     },
     {
-        "question": "What is the difference between a field and a method in a class?",
-        "correct_answer": "A field is a variable that holds data, while a method defines behavior.",
+        "question": "In recursion, what is meant by \"divide and conquer\"?",
+        "correct_answer": "A strategy that breaks a problem into smaller subproblems, solves them individually, and combines their results.",
         "options": [
-            "A field is a variable that holds data, while a method defines behavior.",
-            "A field defines behavior, while a method holds data.",
-            "Both are used to initialize an object.",
-            "There is no difference; they are synonyms."
+            "A strategy that breaks a problem into smaller subproblems, solves them individually, and combines their results.",
+            "A method that uses multiple recursive calls to solve a problem simultaneously.",
+            "A way to split data into different arrays for processing.",
+            "A technique that divides memory allocation among different functions."
         ],
-        "explanation": "A field is a variable within a class that holds data, while a method is a function within a class that defines the behavior of the objects created from that class."
+        "explanation": "\"Divide and conquer\" in recursion involves dividing a problem into smaller parts, solving each part, and combining the results to solve the original problem."
     },
     {
-        "question": "Which of the following best describes a case study in programming?",
-        "correct_answer": "An in-depth exploration of a practical example to illustrate concepts",
+        "question": "How can recursion be inefficient in some cases?",
+        "correct_answer": "It can lead to high memory usage and slow execution if not optimized.",
         "options": [
-            "An in-depth exploration of a practical example to illustrate concepts",
-            "A theoretical explanation of programming paradigms",
-            "A list of programming languages",
-            "A glossary of technical terms"
+            "It can lead to high memory usage and slow execution if not optimized.",
+            "It always uses less memory than iterative solutions.",
+            "It automatically optimizes itself during execution.",
+            "Recursion is always more efficient than iteration."
         ],
-        "explanation": "A case study in programming involves an in-depth exploration of a practical example to demonstrate and illustrate programming concepts effectively."
+        "explanation": "Recursion can lead to high memory usage due to the call stack and can be slow if each call involves significant overhead, especially without tail call optimization."
     }
 ]

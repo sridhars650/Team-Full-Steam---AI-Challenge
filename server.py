@@ -606,7 +606,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import markdown
 from bs4 import BeautifulSoup
 import json
-import time, threading
+import time, threading,requests
 
 filepath = "./tutor_textbook.pdf"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx', 'png', 'jpg', 'jpeg', 'gif'}
@@ -622,16 +622,29 @@ def tutor_ai():
     global url_data, prompt_data  # Access global variables
 
     if request.method == "POST":
+        file_name = "tutor_textbook.pdf"
         url_data = request.form.get("url")
         print("URL: ", url_data)
-        if 'file' not in request.files:
+        if 'file' not in request.files and url_data != "":
             print('No file uploaded!')
         else:
           file = request.files['file']
           file.save(filepath)
           print("File saved:", filepath)
-        if (url_data != ""):
-            subprocess.check_call("curl", url_data, ">", "tutor_textbook.pdf")
+        if url_data:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            }
+
+            response = requests.get(url_data,headers=headers, stream=True)
+            response.raise_for_status()  # Raise an error for failed requests (e.g., 404, 500)
+            
+            with open(file_name, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+
+            print(f"Downloaded {file_name} successfully.")
         print("File: ",file)
         prompt_data = request.form.get("prompt")
         base_qa_pipeline = BaseQAPipeline()
@@ -776,10 +789,15 @@ def get_clear_status():
 
 
 if __name__ == "__main__":
-    #from waitress import serve
-    #serve(app, host="0.0.0.0", port=8081)
+    from waitress import serve
+    host = "0.0.0.0"
+    port = 10000
+    os.system("clear")
+    print(f"Server is running on {host}:{port}")
+    serve(app, host=host, port=port)
+    print("Stopping server...") 
     # above code is for SERVER
     #below code right now is to debug
-    print("Server is running...")
-    app.run(port=8081,debug=True)
-    print("Stopping server...") 
+    # print("Server is running...")
+    # app.run(port=8081,debug=True)
+    # print("Stopping server...") 
