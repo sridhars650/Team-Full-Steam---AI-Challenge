@@ -7,6 +7,7 @@ Here's a cleaned-up and well-formatted version of your instructions:
 ---
 
 ## Get Started  
+You can use Github Codespaces for this project.
 
 To locally host this project, follow these steps:  
 
