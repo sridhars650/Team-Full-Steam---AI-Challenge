@@ -173,7 +173,7 @@ class BaseQAPipeline:
 
         if (self.guardrails(result['result']) == False):
             print("the LLM has generated a bad resposne (this is a message to debug)")
-            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+            return {'query': question, 'context': 'No context.', 'result': 'Sorry, The LLM has generated a bad response.'}
         return result
 
     def guardrails(self, input):
@@ -470,9 +470,9 @@ class Summarizer:
 
         self.update_chat_history(question, result['result'])
 
-        if (self.guardrails(result['result']) == False):
-            print("the LLM has generated a bad resposne (this is a message to debug)")
-            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        # if (self.guardrails(result['result']) == False):
+        #     print("the LLM has generated a bad resposne (this is a message to debug)")
+        #     return {'query': question, 'context': 'No context.', 'result': 'Sorry, The LLM has generated a bad response.'}
 
         return result
 
@@ -585,11 +585,11 @@ class QuizAI:
         })
 
         self.update_chat_history(question, result['result'])
-
+        print(result['result'])
         # COMMENTED OUT RIGHT NOW AS IT GIVES FALSE POSITIVES, NEEDS MORE TESTING
-        if (self.guardrails(result['result']) == False):
-            print("the LLM has generated a bad resposne (this is a message to debug)")
-            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        # if (self.guardrails(result['result']) == False):
+        #     print("the LLM has generated a bad resposne (this is a message to debug)")
+        #     return {'query': question, 'context': 'No context.', 'result': 'Sorry, The LLM has generated a bad response.'}
 
         return result
 
@@ -607,6 +607,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import markdown
 from bs4 import BeautifulSoup
 import json
+import time, threading
 
 filepath = "./tutor_textbook.pdf"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx', 'png', 'jpg', 'jpeg', 'gif'}
@@ -753,10 +754,27 @@ def quiz_maker():
 def generated_quiz():
     return render_template('generated-quiz.html', quizfile="static/quiz-data.json")
 
-# Endpoint to signal clearing localStorage
+# Below is an implementation of clearing the storage for the user. NOT IMPLEMENTED YET
+clear_signal = False
+def reset_clear_signal():
+    global clear_signal
+    time.sleep(120)  # Wait for 10 seconds
+    clear_signal = False  # Reset to False
+
 @app.route('/clear-localstorage', methods=['POST'])
 def clear_localstorage():
-    return jsonify({"clear": True})  # Signal to clear localStorage
+    global clear_signal
+    clear_signal = True  # Set signal to True
+    
+    # Start a separate thread to reset the signal after 10 seconds
+    threading.Thread(target=reset_clear_signal, daemon=True).start()
+    
+    return jsonify({"clear": True})  # Respond immediately with True
+
+@app.route('/get-clear-status', methods=['GET'])
+def get_clear_status():
+    return jsonify({"clear": clear_signal})  # Return the current clear status
+
 
 if __name__ == "__main__":
     #from waitress import serve

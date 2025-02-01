@@ -166,10 +166,16 @@
             .then(response => response.json())
             .then(data => {
                 if (data.clear) {
-                    console.log("Triggered clear signal!");
+                    function clearLocalStorage() {
+                        for (let i = 0; i <= 10; i++) {
+                            localStorage.removeItem(`question-${i}-answer`);
+                        }
+                    }
                 }
-            });
+            })
+            .catch(error => console.error('Error:', error));
         }
+
         document.addEventListener('DOMContentLoaded', () => {
             const popup = document.getElementById('popup');
             const cookiesAccepted = localStorage.getItem('cookiesAccepted');
@@ -196,10 +202,11 @@
                     submitButton.textContent = 'Processing...';
                     submitButton.style.backgroundColor = 'grey';
 
+                    clearStorage()
                     // Add query parameter to indicate submission
                     window.location.search = '?submitted=true';
-                    clearStorage();
                     form.submit();
+
                 } else {
                     submitButton.textContent = 'Provide input first!';
                     submitButton.style.backgroundColor = 'red';
