@@ -46,7 +46,7 @@ To locally host this project, follow these steps:
      ```sh
      python server_setup.py
      ```  
-   - Wait for all Guardrails to finish installing.  
+   - Wait for all Guardrails to finish installing & until you see "Server is running on ____"  
 
 Type in localhost:8080 or 127.0.0.1:8080 to view the website!
 
