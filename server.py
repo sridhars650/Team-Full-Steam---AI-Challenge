@@ -789,10 +789,15 @@ def get_clear_status():
 
 
 if __name__ == "__main__":
-    #from waitress import serve
-    #serve(app, host="0.0.0.0", port=8081)
+    from waitress import serve
+    host = "0.0.0.0"
+    port = 8080
+    os.system("clear")
+    print(f"Server is running on {host}:{port}")
+    serve(app, host=host, port=port)
+    print("Stopping server...") 
     # above code is for SERVER
     #below code right now is to debug
-    print("Server is running...")
-    app.run(port=8081,debug=True)
-    print("Stopping server...") 
+    # print("Server is running...")
+    # app.run(port=8081,debug=True)
+    # print("Stopping server...") 
