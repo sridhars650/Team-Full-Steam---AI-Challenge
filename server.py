@@ -74,7 +74,117 @@ guard = Guard().use_many(
 
 )
 
+class HistoryChatBot:
+    def __init__(self):
+        self.doc = "tutor_textbook.pdf"
+        self.loader = PyPDFLoader(self.doc)
 
+        # Load the document and store it in the 'data' variable
+        self.data = self.loader.load_and_split()
+
+        self.embeddings = OpenAIEmbeddings()
+        self.vectordb = Chroma.from_documents(self.data, embedding=self.embeddings,
+                                 persist_directory=".")
+
+        # Initialize a language model with ChatOpenAI
+        self.llm = ChatOpenAI(model_name= 'gpt-4o', temperature=0.6)
+
+        #Setup a prompt template
+        template = """\
+        You are an assistant for question-answering tasks.
+
+        Use the following pieces of retrieved context to answer the question.
+
+        If either the PDF or the question are not related to each other or not 
+        related to any educational standard, state the following: This content is 
+        not related to any educational purposes. 
+
+        For example, if topics are not the same, like a java textbook is given, 
+        however, the user asks about a physics question, state the following: This
+        content is not related to the inputted textbook, please select another textbook
+        and try again.
+
+        If you don't know the answer, just say that you don't know.
+
+        Use three sentences maximum and keep the answer concise. 
+
+        Question: {question}
+
+        Context: {context}
+
+        Answer:
+
+        """
+
+        prompt = ChatPromptTemplate.from_template(template)
+
+        chain_type_kwargs = {"prompt": prompt}
+
+
+
+        # 1. Vectorstore-based retriever
+        self.vectorstore_retriever = self.vectordb.as_retriever()
+
+        # Initialize a RetrievalQA chain with the language model and vector database retriever
+        self.qa_chain = RetrievalQA.from_chain_type(self.llm, retriever= self.vectorstore_retriever, chain_type_kwargs=chain_type_kwargs)
+        self.chat_history = []  # Initialize chat history
+
+    def update_chat_history(self, question, answer):
+        self.chat_history.append({"question": question, "answer": answer})
+
+    # def build_combined_context(self):
+    #     """Combine chat history and document context."""
+    #     # Combine all previous chat history
+    #     chat_context = "\n".join([f"Q: {entry['question']}\nA: {entry['answer']}" for entry in self.chat_history])
+        
+    #     # Fetch relevant context from the vector store based on the current question
+    #     if self.chat_history:
+    #         current_question = self.chat_history[-1]['question']
+    #         context_from_db = self.vectorstore_retriever.get_relevant_documents(current_question)
+    #     else:
+    #         context_from_db = self.vectorstore_retriever.get_relevant_documents("")
+
+    #     # Convert the list of context documents into a string
+    #     context_str = "\n".join([doc.page_content for doc in context_from_db])
+
+    #     # Combine both chat history and the document context
+    #     combined_context = f"Chat history:\n{chat_context}\n\nContext from the document:\n{context_str}"
+        
+    #     return combined_context
+
+
+    def invoke(self, input_dict):
+        question = input_dict.get("question")
+        print(question)
+        if (self.guardrails(question) == False):
+          print("The user entered in a bad question (this is only a message to debug)\n")
+          return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        #combined_context = self.build_combined_context()
+        context += ("Question: " + question)
+
+        result = self.qa_chain.invoke({
+            "query": question,
+            "context": context
+        })
+
+        self.update_chat_history(question, result['result'])
+
+        if (self.guardrails(result['result']) == False):
+            print("the LLM has generated a bad resposne (this is a message to debug)")
+            return {'query': question, 'context': 'No context.', 'result': 'Sorry, The LLM has generated a bad response.'}
+        
+        context += ("Result: " + result)
+        return result
+
+    def guardrails(self, input):
+      #if guardrails return true send back whatever the input is,
+      #else send back an error message
+      try:
+        guard.validate(input)
+        return True
+      except Exception as e:
+        print(e)
+        return False
 
 #Setup Base QA system pipeline
 class BaseQAPipeline:
