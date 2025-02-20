@@ -4,6 +4,8 @@ steps:
 
 images: ['gcr.io/$PROJECT_ID/tutorai:$COMMIT_SHA']
 
+options:
+  logging: CLOUD_LOGGING_ONLY
 
 # Optional: Deploy to Cloud Run
 # - name: 'gcr.io/cloud-builders/gcloud'
