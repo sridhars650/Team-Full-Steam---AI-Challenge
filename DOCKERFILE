@@ -1,4 +1,4 @@
-FROM python:3.9-slim-buster  # Or your preferred Python base image
+FROM python:3.12-slim-buster  # Or your preferred Python base image
 
 WORKDIR /app
 
@@ -14,4 +14,4 @@ RUN python server_setup.py
 EXPOSE 10000
 
 # Define the command to run when the container starts.
-CMD ["python", "server.py"]  # Or whatever command starts your app
+CMD ["python", "main.py"]  # Or whatever command starts your app
