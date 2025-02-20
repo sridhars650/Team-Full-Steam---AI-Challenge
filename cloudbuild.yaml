@@ -1,4 +1,8 @@
 steps:
+- name: 'ubuntu'  # Use a simple image like ubuntu
+  entrypoint: 'bash'
+  args: ['-c', 'ls -lR /workspace']  # List files recursively
+
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/tutorai:$COMMIT_SHA', '.']  # Specify the subdirectory
 
