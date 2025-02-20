@@ -12,22 +12,20 @@ def install_packages():
         sys.exit(1)
 
 def install_guardrail_pkgs(package):
-    """Install a Guardrail package with a timeout."""
-    try:
-        subprocess.run(['timeout', '120', 'guardrails', 'hub', 'install', package], check=True)  # Increased timeout to 120 seconds
-        print(f"✅ Successfully installed {package}!")  # Added success message
-    except subprocess.TimeoutError:
-        print(f"❌ Guardrails installation for {package} timed out.")
-        # Choose how to handle timeout: continue, retry, or exit
-        # For example, to continue:
-        return  # Or you could raise an exception to stop the process
-        # raise  # To stop the build
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error occurred while installing Guardrail package {package}: {e}")
-        # Choose how to handle error: continue, retry, or exit
-        # For example, to continue:
-        return  # Or you could raise an exception to stop the process
-        # raise # To stop the build
+    retries = 3
+    for i in range(retries):
+        try:
+            subprocess.run(['timeout', '300', 'guardrails', 'hub', 'install', package], check=True)
+            print(f"✅ Successfully installed {package}!")
+            return  # Success, exit the function
+        except subprocess.TimeoutError:
+            print(f"❌ Guardrails installation for {package} timed out (attempt {i+1}/{retries}). Retrying in 10 seconds...")
+            time.sleep(10)  # Wait before retrying
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Error installing {package}: {e}")
+            return # Stop trying other packages if one fails.
+
+    print(f"❌ Guardrails installation for {package} failed after {retries} retries.") # All retries failed
 
 
 def main():
