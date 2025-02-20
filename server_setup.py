@@ -31,7 +31,8 @@ def main():
         install_guardrail_pkgs(i)
     subprocess.check_call("clear")
     print("SERVER SETUP HAS FINISHED. SERVER IS NOW LOADING. PLEASE WAIT.")
-    subprocess.Popen([sys.executable, "server.py"]) 
+    #subprocess.Popen([sys.executable, "server.py"]) 
+    # THIS IS FOR GOOGLE CLOUD
     sys.exit()
 
 
