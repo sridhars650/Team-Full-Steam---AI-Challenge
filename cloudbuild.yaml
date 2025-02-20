@@ -1,11 +1,11 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '--cache-from', 'gcr.io/$PROJECT_ID/tutorai:latest', '-t', 'gcr.io/$PROJECT_ID/tutorai:$COMMIT_SHA', '.']
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/tutorai:$COMMIT_SHA', '.']  # Specify the subdirectory
 
 images: ['gcr.io/$PROJECT_ID/tutorai:$COMMIT_SHA']
 
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: CLOUD_LOGGING_ONLY 
 
 # Optional: Deploy to Cloud Run
 # - name: 'gcr.io/cloud-builders/gcloud'
