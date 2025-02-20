@@ -1,5 +1,5 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/tutorai:latest', '.'] 
+  args: ['build', '--cache-from', 'gcr.io/$PROJECT_ID/tutorai:latest', '-t', 'gcr.io/$PROJECT_ID/tutorai:$COMMIT_SHA', '.']
 
-images: ['gcr.io/$PROJECT_ID/tutorai:latest']
+images: ['gcr.io/$PROJECT_ID/tutorai:$COMMIT_SHA']
