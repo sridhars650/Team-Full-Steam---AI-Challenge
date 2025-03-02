@@ -14,4 +14,4 @@ RUN python server_setup.py
 EXPOSE 10000
 
 # Define the command to run when the container starts.
-CMD ["python", "main.py"]  # Or whatever command starts your app
+CMD ["python", "main.py"] 
