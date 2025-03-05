@@ -11,7 +11,7 @@ COPY . .
 RUN python server_setup.py
 
 # Expose the port your application listens on.  Replace 8080 with your port.
-EXPOSE 10000
+EXPOSE 8080
 
 # Define the command to run when the container starts.
 CMD ["python", "main.py"] 

@@ -901,7 +901,7 @@ def get_clear_status():
 
 if __name__ == "__main__":
     host = "0.0.0.0"
-    port = 10000
+    port = int(os.environ.get("PORT", 8080))  
     print(f"Server is running on {host}:{port}")
     serve(app, host=host, port=port)
     print("Stopping server...") 
