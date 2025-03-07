@@ -1,6 +1,10 @@
 FROM python:3.12
 
-WORKDIR /app
+ENV APP_HOME /app
+
+ENV PORT 8080
+
+WORKDIR $APP_HOME
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
@@ -14,4 +18,4 @@ RUN python server_setup.py
 EXPOSE 8080
 
 # Define the command to run when the container starts.
-CMD ["python", "main.py"] 
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
