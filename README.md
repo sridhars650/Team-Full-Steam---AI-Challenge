@@ -53,6 +53,8 @@ Type in localhost:10000 or 127.0.0.1:10000 to view the website!
 
 You're now ready to use the AI tutoring platform! 🚀 
 
+Check it out live at: https://tutorai-49331399518.us-west4.run.app/
+
 ---
 
 
