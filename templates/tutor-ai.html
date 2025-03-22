@@ -141,6 +141,7 @@
             background-color: #0056b3;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
     <div class="popup" id="popup">
@@ -166,9 +167,21 @@
             <button type="submit" id="submitButton">Ask</button>
         </form>
         {% if result %}
+        {% if result.pages %}
+            <input type="hidden"  id="pages_data" value="{{ result.pages | tojson}}">
+        {% endif %}     
             <div id="result">
                 <p><strong>Question:</strong> {{ result.query }}</p>
                 <p id="answer"><strong>Answer:</strong> {{ result.result }}</p>
+        
+                <p><strong>Relevant PDF:</strong> <a href="/tutor_textbook" target="_blank">View PDF</a></p>
+                <canvas id="pdf-viewer"></canvas>
+                <div>
+                    <button id="prev-page">Previous Page</button>
+                    <span>Page <span id="page-num"></span> of <span id="page-count"></span></span>
+                    <button id="next-page">Next Page</button>
+                </div>
+        
                 <script>
                     const submitButton = document.getElementById('submitButton');
                     submitButton.disabled = false;
@@ -176,12 +189,88 @@
                     submitButton.style.backgroundColor = '#4CAF50';
                     const popup = document.getElementById('popup');
                     popup.style.display = 'none';
+        
+                    let pdfDoc = null,
+                        pageNum = 1,
+                        pageIsRendering = false,
+                        pageNumPending = null;
+        
+                    const scale = 1.5,
+                        canvas = document.querySelector("#pdf-viewer"),
+                        ctx = canvas.getContext("2d");
+        
+                    const url = "./tutor_textbook"; // Get the Flask-provided PDF path
+        
+                    // Load the PDF
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        
+                    pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+                        pdfDoc = pdfDoc_;
+                        document.querySelector("#page-count").textContent = pdfDoc.numPages;
+                        console.log(pdfDoc);
+                        console.log(pdfDoc.numPages);
+                        renderPage(pageNum);
+                    });
+        
+                    // Render the page
+                    const renderPage = num => {
+                        console.log(num);
+                        pageIsRendering = true;
+                        pdfDoc.getPage(num).then(page => {
+                            const viewport = page.getViewport({ scale });
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+        
+                            const renderCtx = {
+                                canvasContext: ctx,
+                                viewport
+                            };
+        
+                            page.render(renderCtx).promise.then(() => {
+                                pageIsRendering = false;
+                                if (pageNumPending !== null) {
+                                    renderPage(pageNumPending);
+                                    pageNumPending = null;
+                                }
+                            });
+        
+                            document.querySelector("#page-num").textContent = num;
+                        });
+                    };
+        
+                    // Show next page
+                    document.querySelector("#next-page").addEventListener("click", () => {
+                        if (pageNum >= pdfDoc.numPages) return;
+                        pageNum++;
+                        renderPage(pageNum);
+                    });
+        
+                    // Show previous page
+                    document.querySelector("#prev-page").addEventListener("click", () => {
+                        if (pageNum <= 1) return;
+                        pageNum--;
+                        renderPage(pageNum);
+                    });
+        
+                    // Highlight Answer Page
+                    function highlightAnswerPage(pages) {
+                        pages = JSON.parse(pages);
+                        if (pages.length > 0) {
+                            pageNum = parseInt(pages[0]); // Go to the first relevant page
+                            pageNum++; // It uses index 0 for some reason so we need to start on page num 1
+                            renderPage(pageNum);
+                        }
+                    }
+                    const page = document.querySelector('#pages_data').value;
+                    console.log(page)
+                    // Automatically highlight the relevant page
+                    highlightAnswerPage(page);
                 </script>
             </div>
-        {% endif %}
+        {% endif %}        
         <a href="/" class="back-button">Back to Home</a>
     </div>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const popup = document.getElementById('popup');

@@ -269,11 +269,17 @@ class BaseQAPipeline:
     def invoke(self, input_dict):
         question = input_dict.get("question")
         print(question)
-        if (self.guardrails(question) == False):
-          print("The user entered in a bad question (this is only a message to debug)\n")
-          return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+        if not self.guardrails(question):
+            print("The user entered in a bad question (this is only a message to debug)\n")
+            return {'query': question, 'context': 'No context.', 'result': 'Sorry, please ask another question '}
+
         combined_context = self.build_combined_context()
 
+        context_from_db = self.vectorstore_retriever.get_relevant_documents(question)
+        
+        # Extract page numbers
+        page_numbers = [doc.metadata.get("page", "Unknown") for doc in context_from_db]
+        
         result = self.qa_chain.invoke({
             "query": question,
             "context": combined_context
@@ -281,10 +287,13 @@ class BaseQAPipeline:
 
         self.update_chat_history(question, result['result'])
 
-        if (self.guardrails(result['result']) == False):
-            print("the LLM has generated a bad resposne (this is a message to debug)")
+        if not self.guardrails(result['result']):
+            print("the LLM has generated a bad response (this is a message to debug)")
             return {'query': question, 'context': 'No context.', 'result': 'Sorry, The LLM has generated a bad response.'}
-        return result
+        
+        # Include page number in the result
+        return {'query': question, 'context': combined_context, 'result': result['result'], 'pages': page_numbers}
+
 
     def guardrails(self, input):
       #if guardrails return true send back whatever the input is,
@@ -712,7 +721,7 @@ class QuizAI:
         print(e)
         return False
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory
 import markdown
 from bs4 import BeautifulSoup
 import json
@@ -729,40 +738,43 @@ def index():
 
 @app.route("/tutor-ai", methods=["GET", "POST"])
 def tutor_ai():
-    global url_data, prompt_data  # Access global variables
+    global url_data, prompt_data
 
     if request.method == "POST":
         file_name = "tutor_textbook.pdf"
         url_data = request.form.get("url")
-        print("URL: ", url_data)
-        if 'file' not in request.files and url_data != "":
+
+        if 'file' not in request.files and not url_data:
             print('No file uploaded!')
         else:
-          file = request.files['file']
-          file.save(filepath)
-          print("File saved:", filepath)
+            file = request.files['file']
+            file.save(filepath)
+            print("File saved:", filepath)
+
         if url_data:
             headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "User-Agent": "Mozilla/5.0",
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             }
 
-            response = requests.get(url_data,headers=headers, stream=True)
-            response.raise_for_status()  # Raise an error for failed requests (e.g., 404, 500)
-            
+            response = requests.get(url_data, headers=headers, stream=True)
+            response.raise_for_status()
+
             with open(file_name, "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
 
             print(f"Downloaded {file_name} successfully.")
-        print("File: ",file)
+
         prompt_data = request.form.get("prompt")
         base_qa_pipeline = BaseQAPipeline()
-        result = base_qa_pipeline.invoke({'question' : prompt_data})
+        result = base_qa_pipeline.invoke({'question': prompt_data})
         print(result)
+
         return render_template("tutor-ai.html", result=result)
 
     return render_template("tutor-ai.html")
+
 
 @app.route("/summarizer", methods=["GET", "POST"])
 def summarizer():
@@ -897,11 +909,14 @@ def clear_localstorage():
 def get_clear_status():
     return jsonify({"clear": clear_signal})  # Return the current clear status
 
+@app.route('/tutor_textbook', methods=['GET'])
+def tutor_textbook():
+    return send_from_directory(os.getcwd(), 'tutor_textbook.pdf')
 
 if __name__ == "__main__":
     from waitress import serve
     host = "0.0.0.0"
-    port = 10000
+    port = 10002
     os.system("clear")
     print(f"Server is running on {host}:{port}")
     serve(app, host=host, port=port)
