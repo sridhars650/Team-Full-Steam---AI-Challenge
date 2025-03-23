@@ -1,0 +1,16 @@
+steps:
+- name: 'ubuntu'  # Use a simple image like ubuntu
+  entrypoint: 'bash'
+  args: ['-c', 'ls -lR /workspace']  # List files recursively
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/tutorai:$COMMIT_SHA', '.']  # Specify the subdirectory
+
+images: ['gcr.io/$PROJECT_ID/tutorai:$COMMIT_SHA']
+
+options:
+  logging: CLOUD_LOGGING_ONLY 
+
+# Optional: Deploy to Cloud Run
+# - name: 'gcr.io/cloud-builders/gcloud'
+#   args: ['run', 'deploy', 'tutorai', '--image', 'gcr.io/$PROJECT_ID/tutorai:$COMMIT_SHA', '--region', 'us-central1', '--platform', 'managed']
