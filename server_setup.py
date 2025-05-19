@@ -18,7 +18,7 @@ def install_guardrail_pkgs(package):
             subprocess.run(['timeout', '300', 'guardrails', 'hub', 'install', package], check=True)
             print(f"✅ Successfully installed {package}!")
             return  # Success, exit the function
-        except subprocess.TimeoutError:
+        except TimeoutError:
             print(f"❌ Guardrails installation for {package} timed out (attempt {i+1}/{retries}). Retrying in 10 seconds...")
             time.sleep(10)  # Wait before retrying
         except subprocess.CalledProcessError as e:
